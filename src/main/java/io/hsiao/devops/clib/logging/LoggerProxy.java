@@ -33,6 +33,18 @@ public final class LoggerProxy {
     return props;
   }
 
+  public static Logger getGlobal() {
+    if (global != null) {
+      return global;
+    }
+
+    // set the global logger level (JDK bug)
+    Logger.getGlobal().setLevel(Level.INFO);
+    global = Logger.getGlobal();
+
+    return global;
+  }
+
   public static Logger getLogger() throws Exception {
     if (logger != null) {
       return logger;
@@ -71,5 +83,6 @@ public final class LoggerProxy {
     return logger;
   }
 
+  private static Logger global = null;
   private static Logger logger = null;
 }

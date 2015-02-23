@@ -74,4 +74,9 @@ public final class CommonUtils {
 
     return value;
   }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Throwable> void throwAs(final Throwable ex) throws T {
+    throw (T) ex;
+  }
 }
