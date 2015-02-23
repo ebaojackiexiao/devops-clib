@@ -2,17 +2,25 @@ package io.hsiao.devops.clib.teamforge;
 
 import io.hsiao.devops.clib.exception.Exception;
 import io.hsiao.devops.clib.logging.LoggerProxy;
+import io.hsiao.devops.clib.utils.ZipUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.activation.DataHandler;
+
 import com.collabnet.ce.soap60.types.SoapFilter;
 import com.collabnet.ce.soap60.webservices.ClientSoapStubFactory;
 import com.collabnet.ce.soap60.webservices.cemain.AssociationSoapList;
 import com.collabnet.ce.soap60.webservices.cemain.AssociationSoapRow;
+import com.collabnet.ce.soap60.webservices.cemain.AttachmentSoapList;
+import com.collabnet.ce.soap60.webservices.cemain.AttachmentSoapRow;
 import com.collabnet.ce.soap60.webservices.cemain.CommentSoapList;
 import com.collabnet.ce.soap60.webservices.cemain.CommentSoapRow;
 import com.collabnet.ce.soap60.webservices.cemain.ICollabNetSoap;
@@ -22,6 +30,7 @@ import com.collabnet.ce.soap60.webservices.cemain.TrackerFieldSoapDO;
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapDO;
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapList;
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapRow;
+import com.collabnet.ce.soap60.webservices.filestorage.IFileStorageAppSoap;
 import com.collabnet.ce.soap60.webservices.scm.Commit2SoapDO;
 import com.collabnet.ce.soap60.webservices.scm.IScmAppSoap;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapDO;
@@ -37,8 +46,9 @@ public final class Teamforge {
 
     try {
       cemainSoap = (ICollabNetSoap) ClientSoapStubFactory.getSoapStub(ICollabNetSoap.class, serverUrl, timeoutMs);
-      trackerAppSoap = (ITrackerAppSoap) ClientSoapStubFactory.getSoapStub(ITrackerAppSoap.class, serverUrl, timeoutMs);
+      fileStorageAppSoap = (IFileStorageAppSoap) ClientSoapStubFactory.getSoapStub(IFileStorageAppSoap.class, serverUrl, timeoutMs);
       scmAppSoap = (IScmAppSoap) ClientSoapStubFactory.getSoapStub(IScmAppSoap.class, serverUrl, timeoutMs);
+      trackerAppSoap = (ITrackerAppSoap) ClientSoapStubFactory.getSoapStub(ITrackerAppSoap.class, serverUrl, timeoutMs);
     }
     catch (Throwable ex) {
       final Exception exception = new Exception("failed to instantiate soap objects");
@@ -429,11 +439,90 @@ public final class Teamforge {
     }
   }
 
+  public List<AttachmentElement> listAttachments(final String objectId) throws Exception {
+    if (objectId == null) {
+      throw new Exception("argument 'objectId' is null");
+    }
+
+    try {
+      final AttachmentSoapList attachmentSoapList = cemainSoap.listAttachments(sessionKey, objectId);
+      final AttachmentSoapRow[] attachmentSoapRows = attachmentSoapList.getDataRows();
+
+      final List<AttachmentElement> attachmentList = new LinkedList<>();
+      for (final AttachmentSoapRow attachmentSoapRow: attachmentSoapRows) {
+        attachmentList.add(new AttachmentElement(attachmentSoapRow));
+      }
+
+      return attachmentList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to list attachments [" + objectId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to list attachments [" + objectId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public void downloadAttachments(final String objectId, final boolean verbose, final boolean compress, final boolean compressEmpty) throws Exception {
+    if (objectId == null) {
+      throw new Exception("argument 'objectId' is null");
+    }
+
+    final File folder = new File(objectId);
+    try {
+      org.apache.commons.io.FileUtils.deleteDirectory(folder);
+      org.apache.commons.io.FileUtils.forceMkdir(folder);
+    }
+    catch (java.lang.Exception ex) {
+      final Exception exception = new Exception("failed to initialize download directory [" + folder + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to initialize download directory [" + folder + "]", exception);
+      throw exception;
+    }
+
+    final List<AttachmentElement> attachmentList = listAttachments(objectId);
+    for (final AttachmentElement attachment: attachmentList) {
+      final String filename = attachment.getFileName();
+      final String rawFileId = attachment.getRawFileId();
+
+      if (verbose) {
+        LoggerProxy.getGlobal().log(Level.INFO, "downloading attachment [" + objectId + "] [" + filename + "]");
+      }
+      logger.log(Level.INFO, "downloading attachment [" + objectId + "] [" + filename + "] [" + rawFileId + "]");
+
+      final File file = new File(objectId + File.separator + filename);
+      try (final FileOutputStream fos = new FileOutputStream(file)) {
+        final DataHandler dataHandler = fileStorageAppSoap.downloadFileDirect(sessionKey, objectId, rawFileId);
+        dataHandler.writeTo(fos);
+      }
+      catch (IOException ex) {
+        final Exception exception = new Exception("failed to download attachment [" + objectId + "] [" + filename + "]");
+        exception.initCause(ex);
+        logger.log(Level.INFO, "failed to download attachment [" + objectId + "] [" + filename + "] [" + rawFileId + "]", exception);
+        throw exception;
+      }
+    }
+
+    if (compress) {
+      ZipUtils.pack(folder, new File(objectId + ".zip"), verbose, compressEmpty);
+      try {
+        org.apache.commons.io.FileUtils.deleteDirectory(folder);
+      }
+      catch (java.lang.Exception ex) {
+        final Exception exception = new Exception("failed to delete temporary download directory [" + folder + "]");
+        exception.initCause(ex);
+        logger.log(Level.INFO, "failed to delete temporary download directory [" + folder + "]", exception);
+        throw exception;
+      }
+    }
+  }
+
   private final Logger logger = LoggerProxy.getLogger();
   private final String serverUrl;
   private final ICollabNetSoap cemainSoap;
-  private final ITrackerAppSoap trackerAppSoap;
+  private final IFileStorageAppSoap fileStorageAppSoap;
   private final IScmAppSoap scmAppSoap;
+  private final ITrackerAppSoap trackerAppSoap;
   private String username;
   private String sessionKey;
 }
