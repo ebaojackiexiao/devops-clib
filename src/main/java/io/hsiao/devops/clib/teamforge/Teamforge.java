@@ -1,19 +1,29 @@
 package io.hsiao.devops.clib.teamforge;
 
 import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.LoggerProxy;
+import io.hsiao.devops.clib.utils.CommonUtils;
 import io.hsiao.devops.clib.utils.ZipUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.rmi.RemoteException;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 
 import com.collabnet.ce.soap60.types.SoapFilter;
 import com.collabnet.ce.soap60.webservices.ClientSoapStubFactory;
@@ -515,6 +525,67 @@ public final class Teamforge {
         logger.log(Level.INFO, "failed to delete temporary download directory [" + folder + "]", exception);
         throw exception;
       }
+    }
+  }
+
+  public void uploadAttachments(final File source, final String objectId, final String comment, final boolean verbose) throws Exception {
+    if (source == null) {
+      throw new Exception("argument 'source' is null");
+    }
+
+    if (objectId == null) {
+      throw new Exception("argument 'objectId' is null");
+    }
+
+    try {
+      Files.walkFileTree(source.toPath(), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
+        new SimpleFileVisitor<Path>() {
+          @Override
+          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            try {
+              if (verbose) {
+                LoggerProxy.getGlobal().log(Level.INFO, "uploading attachment [" + objectId + "] [" + file + "]");
+              }
+              LoggerProxy.getLogger().log(Level.INFO, "uploading attachment [" + objectId + "] [" + file + "]");
+
+              final DataHandler handler = new DataHandler(new FileDataSource(file.toFile()));
+              final String storedFileId = uploadFile(handler);
+
+              final ArtifactData artifactData = getArtifactData(objectId);
+              setArtifactData(artifactData, comment, handler.getName(), handler.getContentType(), storedFileId);
+            }
+            catch (Exception exception) {
+              logger.log(Level.INFO, "failed to upload attachment [" + objectId + "] [" + file + "]", exception);
+              CommonUtils.<RuntimeException>throwAs(exception);
+            }
+
+            return FileVisitResult.CONTINUE;
+          }
+      });
+    }
+    catch (IOException ex) {
+      final Exception exception = new Exception("failed to upload attachments [" + source + "] for [" + objectId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to upload attachments [" + source + "] for [" + objectId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public String uploadFile(final DataHandler handler) throws Exception {
+    if (handler == null) {
+      throw new Exception("argument 'handler' is null");
+    }
+
+    try {
+      final String storedFileId = fileStorageAppSoap.uploadFile(sessionKey, handler);
+      logger.log(Level.INFO, "uploaded file [" + handler.getName() + "] [" + handler.getContentType() + "] [" + storedFileId + "]");
+      return storedFileId;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to upload file [" + handler.getName() + "] [" + handler.getContentType() + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to upload file [" + handler.getName() + "] [" + handler.getContentType() + "]", exception);
+      throw exception;
     }
   }
 
