@@ -276,17 +276,18 @@ public final class Teamforge {
     }
   }
 
-  public void setArtifactData(final ArtifactData artifactData, final String comment) throws Exception {
+  public void setArtifactData(final ArtifactData artifactData, final String comment,
+    final String attachmentFileName, final String attachmentMimeType, final String attachmentFileId) throws Exception {
     if (artifactData == null) {
       throw new Exception("argument 'artifactData' is null");
     }
 
     try {
       final ArtifactSoapDO artifactSoapDO = artifactData.getArtifactSoapDO();
-      trackerAppSoap.setArtifactData(sessionKey, artifactSoapDO, comment, null, null, null);
+      trackerAppSoap.setArtifactData(sessionKey, artifactSoapDO, comment, attachmentFileName, attachmentMimeType, attachmentFileId);
     }
     catch (RemoteException ex) {
-      final Exception exception = new Exception("failed to set artifact data");
+      final Exception exception = new Exception("failed to set artifact data [" + artifactData.getId() + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to set artifact data [" + artifactData.getId() + "]", exception);
       throw exception;
