@@ -52,8 +52,8 @@ public final class ZipUtils {
             try {
               LoggerProxy.getLogger().log(Level.INFO, "packing file entry [" + file + "] into [" + dest + "]");
             }
-            catch (Exception ex) {
-              CommonUtils.<RuntimeException>throwAs(ex);
+            catch (Exception exception) {
+              CommonUtils.<RuntimeException>throwAs(exception);
             }
 
             zos.putNextEntry(new ZipEntry(file.toString()));
@@ -85,8 +85,8 @@ public final class ZipUtils {
                 zos.closeEntry();
               }
             }
-            catch (Exception ex) {
-              CommonUtils.<RuntimeException>throwAs(ex);
+            catch (Exception exception) {
+              CommonUtils.<RuntimeException>throwAs(exception);
             }
 
             return FileVisitResult.CONTINUE;
