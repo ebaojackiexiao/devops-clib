@@ -474,12 +474,17 @@ public final class Teamforge {
     }
   }
 
-  public void downloadAttachments(final String objectId, final boolean verbose, final boolean compress, final boolean compressEmpty) throws Exception {
+  public void downloadAttachments(final String objectId, final String url, final boolean verbose,
+    final boolean compress, final boolean compressEmpty) throws Exception {
     if (objectId == null) {
       throw new Exception("argument 'objectId' is null");
     }
 
-    final File folder = new File(objectId);
+    if (url == null) {
+      throw new Exception("argument 'url' is null");
+    }
+
+    final File folder = new File(url + File.separator + objectId);
     try {
       org.apache.commons.io.FileUtils.deleteDirectory(folder);
       org.apache.commons.io.FileUtils.forceMkdir(folder);
@@ -501,7 +506,7 @@ public final class Teamforge {
       }
       logger.log(Level.INFO, "downloading attachment [" + objectId + "] [" + filename + "] [" + rawFileId + "]");
 
-      final File file = new File(objectId + File.separator + filename);
+      final File file = new File(folder.toString() + File.separator + filename);
       try (final FileOutputStream fos = new FileOutputStream(file)) {
         final DataHandler dataHandler = fileStorageAppSoap.downloadFileDirect(sessionKey, objectId, rawFileId);
         dataHandler.writeTo(fos);
@@ -515,7 +520,7 @@ public final class Teamforge {
     }
 
     if (compress) {
-      ZipUtils.pack(folder, new File(objectId + ".zip"), verbose, compressEmpty);
+      ZipUtils.pack(folder, new File(folder.toString() + ".zip"), verbose, compressEmpty);
       try {
         org.apache.commons.io.FileUtils.deleteDirectory(folder);
       }
