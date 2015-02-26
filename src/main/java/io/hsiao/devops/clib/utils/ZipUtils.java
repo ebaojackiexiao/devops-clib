@@ -56,7 +56,8 @@ public final class ZipUtils {
               CommonUtils.<RuntimeException>throwAs(exception);
             }
 
-            zos.putNextEntry(new ZipEntry(file.toString()));
+            final Path relative = source.toPath().toAbsolutePath().relativize(file.toAbsolutePath());
+            zos.putNextEntry(new ZipEntry(relative.toString()));
 
             final byte[] buffer = new byte[1024];
             int len;
@@ -78,10 +79,11 @@ public final class ZipUtils {
             }
 
             try {
-              if (FileUtils.isEmptyDirectory(dir.toFile())) {
+              final Path relative = source.toPath().toAbsolutePath().relativize(dir.toAbsolutePath());
+              if (!relative.toString().isEmpty()) {
                 LoggerProxy.getLogger().log(Level.INFO, "packing dir entry [" + dir + "] into [" + dest + "]");
 
-                zos.putNextEntry(new ZipEntry(dir.toString() + "/"));
+                zos.putNextEntry(new ZipEntry(relative.toString() + "/"));
                 zos.closeEntry();
               }
             }
