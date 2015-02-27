@@ -41,6 +41,10 @@ import com.collabnet.ce.soap60.webservices.cemain.UserSoapDO;
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapList;
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapRow;
 import com.collabnet.ce.soap60.webservices.filestorage.IFileStorageAppSoap;
+import com.collabnet.ce.soap60.webservices.frs.IFrsAppSoap;
+import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapDO;
+import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapList;
+import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapRow;
 import com.collabnet.ce.soap60.webservices.scm.Commit2SoapDO;
 import com.collabnet.ce.soap60.webservices.scm.IScmAppSoap;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapDO;
@@ -57,6 +61,7 @@ public final class Teamforge {
     try {
       cemainSoap = (ICollabNetSoap) ClientSoapStubFactory.getSoapStub(ICollabNetSoap.class, serverUrl, timeoutMs);
       fileStorageAppSoap = (IFileStorageAppSoap) ClientSoapStubFactory.getSoapStub(IFileStorageAppSoap.class, serverUrl, timeoutMs);
+      frsAppSoap = (IFrsAppSoap) ClientSoapStubFactory.getSoapStub(IFrsAppSoap.class, serverUrl, timeoutMs);
       scmAppSoap = (IScmAppSoap) ClientSoapStubFactory.getSoapStub(IScmAppSoap.class, serverUrl, timeoutMs);
       trackerAppSoap = (ITrackerAppSoap) ClientSoapStubFactory.getSoapStub(ITrackerAppSoap.class, serverUrl, timeoutMs);
     }
@@ -440,6 +445,68 @@ public final class Teamforge {
     }
   }
 
+  public String getReleaseId(final String packageId, final String name) throws Exception {
+    if (packageId == null) {
+      throw new Exception("argument 'packageId' is null");
+    }
+
+    if (name == null) {
+      throw new Exception("argument 'name' is null");
+    }
+
+    final List<ReleaseElement> releaseList = getReleaseList(packageId);
+    for (final ReleaseElement releaseElement: releaseList) {
+      if (releaseElement.getTitle().equals(name)) {
+        return releaseElement.getId();
+      }
+    }
+
+    final Exception exception = new Exception("failed to get release id [" + packageId + "] [" + name + "]");
+    logger.log(Level.INFO, "failed to get release id [" + packageId + "] [" + name + "]", exception);
+    throw exception;
+  }
+
+  public List<ReleaseElement> getReleaseList(final String packageId) throws Exception {
+    if (packageId == null) {
+      throw new Exception("argument 'packageId' is null");
+    }
+
+    try {
+      final ReleaseSoapList releaseSoapList = frsAppSoap.getReleaseList(sessionKey, packageId);
+      final ReleaseSoapRow[] releaseSoapRows = releaseSoapList.getDataRows();
+
+      final List<ReleaseElement> releaseList = new LinkedList<>();
+      for (final ReleaseSoapRow releaseSoapRow: releaseSoapRows) {
+        releaseList.add(new ReleaseElement(releaseSoapRow));
+      }
+
+      return releaseList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get release list [" + packageId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get release list [" + packageId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public ReleaseData getReleaseData(final String releaseId) throws Exception {
+    if (releaseId == null) {
+      throw new Exception("argument 'releaseId' is null");
+    }
+
+    try {
+      final ReleaseSoapDO releaseSoapDO = frsAppSoap.getReleaseData(sessionKey, releaseId);
+      return new ReleaseData(releaseSoapDO);
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get release data [" + releaseId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get release data [" + releaseId + "]", exception);
+      throw exception;
+    }
+  }
+
   public List<AttachmentElement> listAttachments(final String objectId) throws Exception {
     if (objectId == null) {
       throw new Exception("argument 'objectId' is null");
@@ -588,6 +655,7 @@ public final class Teamforge {
   private final String serverUrl;
   private final ICollabNetSoap cemainSoap;
   private final IFileStorageAppSoap fileStorageAppSoap;
+  private final IFrsAppSoap frsAppSoap;
   private final IScmAppSoap scmAppSoap;
   private final ITrackerAppSoap trackerAppSoap;
   private String username;
