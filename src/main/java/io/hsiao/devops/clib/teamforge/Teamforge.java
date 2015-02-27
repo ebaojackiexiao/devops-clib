@@ -86,7 +86,7 @@ public final class Teamforge {
       sessionKey = cemainSoap.login(username, password);
     }
     catch (RemoteException ex) {
-      final Exception exception = new Exception("failed to login");
+      final Exception exception = new Exception("failed to login [" + username + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to login [" + username + "]", exception);
       throw exception;
@@ -98,7 +98,7 @@ public final class Teamforge {
       cemainSoap.logoff(username, sessionKey);
     }
     catch (RemoteException ex) {
-      final Exception exception = new Exception("failed to logoff");
+      final Exception exception = new Exception("failed to logoff [" + username + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to logoff [" + username + "]", exception);
       throw exception;
@@ -167,54 +167,44 @@ public final class Teamforge {
       cemainSoap.setUserData(sessionKey, userData.getUserSoapDO());
     }
     catch (RemoteException ex) {
-      final Exception exception = new Exception("failed to set user data");
+      final Exception exception = new Exception("failed to set user data [" + userData.getUserName() + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to set user data [" + userData.getUserName() + "]", exception);
       throw exception;
     }
   }
 
-  private String getProjectIdByName(final String projectName) throws Exception {
-    if (projectName == null) {
-      throw new Exception("argument 'projectName' is null");
+  public String getProjectId(final String name) throws Exception {
+    if (name == null) {
+      throw new Exception("argument 'name' is null");
     }
 
-    try {
-      final ProjectSoapList projectSoapList = cemainSoap.getProjectList(sessionKey, false);
-      final ProjectSoapRow[] projectSoapRows = projectSoapList.getDataRows();
-      for (final ProjectSoapRow projectSoapRow: projectSoapRows) {
-        if (projectSoapRow.getTitle().equals(projectName)) {
-          return projectSoapRow.getId();
-        }
+    final List<ProjectElement> projectList = getProjectList(false);
+    for (final ProjectElement projectElement: projectList) {
+      if (projectElement.getTitle().equals(name)) {
+        return projectElement.getId();
       }
     }
-    catch (RemoteException ex) {
-      final Exception exception = new Exception("failed to get project Id [" + projectName + "]");
-      exception.initCause(ex);
-      logger.log(Level.INFO, "failed to get project Id [" + projectName + "]", exception);
-      throw exception;
-    }
 
-    final Exception exception = new Exception("invalid project name (project not found) [" + projectName + "]");
-    logger.log(Level.INFO, "invalid project name (project not found) [" + projectName + "]", exception);
+    final Exception exception = new Exception("failed to get project id [" + name + "]");
+    logger.log(Level.INFO, "failed to get project id [" + name + "]", exception);
     throw exception;
   }
 
-  public long getProjectDiskUsage(final String projectName) throws Exception {
-    if (projectName == null) {
-      throw new Exception("argument 'projectName' is null");
+  public long getProjectDiskUsage(final String name) throws Exception {
+    if (name == null) {
+      throw new Exception("argument 'name' is null");
     }
 
-    final String projectId = getProjectIdByName(projectName);
+    final String projectId = getProjectId(name);
 
     try {
-      final long projectDiskUsage = cemainSoap.getProjectDiskUsage(sessionKey, projectId);
-      return projectDiskUsage;
+      return cemainSoap.getProjectDiskUsage(sessionKey, projectId);
     }
     catch (RemoteException ex) {
-      final Exception exception = new Exception("failed to get project disk usage [" + projectName + "]");
+      final Exception exception = new Exception("failed to get project disk usage [" + name + "]");
       exception.initCause(ex);
-      logger.log(Level.INFO, "failed to get project disk usage [" + projectName + "]", exception);
+      logger.log(Level.INFO, "failed to get project disk usage [" + name + "]", exception);
       throw exception;
     }
   }
