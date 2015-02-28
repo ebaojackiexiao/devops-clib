@@ -42,6 +42,9 @@ import com.collabnet.ce.soap60.webservices.cemain.UserSoapList;
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapRow;
 import com.collabnet.ce.soap60.webservices.filestorage.IFileStorageAppSoap;
 import com.collabnet.ce.soap60.webservices.frs.IFrsAppSoap;
+import com.collabnet.ce.soap60.webservices.frs.PackageSoapDO;
+import com.collabnet.ce.soap60.webservices.frs.PackageSoapList;
+import com.collabnet.ce.soap60.webservices.frs.PackageSoapRow;
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapDO;
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapList;
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapRow;
@@ -441,6 +444,68 @@ public final class Teamforge {
       final Exception exception = new Exception("failed to get project list for user [" + username + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to get project list for user [" + username + "]", exception);
+      throw exception;
+    }
+  }
+
+  public String getPackageId(final String projectId, final String name) throws Exception {
+    if (projectId == null) {
+      throw new Exception("argument 'projectId' is null");
+    }
+
+    if (name == null) {
+      throw new Exception("argument 'name' is null");
+    }
+
+    final List<PackageElement> packageList = getPackageList(projectId);
+    for (final PackageElement packageElement: packageList) {
+      if (packageElement.getTitle().equals(name)) {
+        return packageElement.getId();
+      }
+    }
+
+    final Exception exception = new Exception("failed to get package id [" + projectId + "] [" + name + "]");
+    logger.log(Level.INFO, "failed to get package id [" + projectId + "] [" + name + "]", exception);
+    throw exception;
+  }
+
+  public List<PackageElement> getPackageList(final String projectId) throws Exception {
+    if (projectId == null) {
+      throw new Exception("argument 'projectId' is null");
+    }
+
+    try {
+      final PackageSoapList packageSoapList = frsAppSoap.getPackageList(sessionKey, projectId);
+      final PackageSoapRow[] packageSoapRows = packageSoapList.getDataRows();
+
+      final List<PackageElement> packageList = new LinkedList<>();
+      for (final PackageSoapRow packageSoapRow: packageSoapRows) {
+        packageList.add(new PackageElement(packageSoapRow));
+      }
+
+      return packageList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get package list [" + projectId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get package list [" + projectId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public PackageData getPackageData(final String packageId) throws Exception {
+    if (packageId == null) {
+      throw new Exception("argument 'packageId' is null");
+    }
+
+    try {
+      final PackageSoapDO packageSoapDO = frsAppSoap.getPackageData(sessionKey, packageId);
+      return new PackageData(packageSoapDO);
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get package data [" + packageId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get package data [" + packageId + "]", exception);
       throw exception;
     }
   }
