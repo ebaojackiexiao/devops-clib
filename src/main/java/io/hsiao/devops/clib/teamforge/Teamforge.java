@@ -51,6 +51,8 @@ import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapRow;
 import com.collabnet.ce.soap60.webservices.scm.Commit2SoapDO;
 import com.collabnet.ce.soap60.webservices.scm.IScmAppSoap;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapDO;
+import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapList;
+import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapRow;
 import com.collabnet.ce.soap60.webservices.tracker.ITrackerAppSoap;
 
 public final class Teamforge {
@@ -568,6 +570,54 @@ public final class Teamforge {
       final Exception exception = new Exception("failed to get release data [" + releaseId + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to get release data [" + releaseId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public List<ArtifactElement> getArtifactListReportedInRelease(final String releaseId) throws Exception {
+    if (releaseId == null) {
+      throw new Exception("argument 'releaseId' is null");
+    }
+
+    try {
+      final ArtifactSoapList artifactSoapList = frsAppSoap.getArtifactListReportedInRelease(sessionKey, releaseId);
+      final ArtifactSoapRow[] artifactSoapRows = artifactSoapList.getDataRows();
+
+      final List<ArtifactElement> artifactList = new LinkedList<>();
+      for (final ArtifactSoapRow artifactSoapRow: artifactSoapRows) {
+        artifactList.add(new ArtifactElement(artifactSoapRow));
+      }
+
+      return artifactList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get artifact list reported in release [" + releaseId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get artifact list reported in release [" + releaseId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public List<ArtifactElement> getArtifactListResolvedInRelease(final String releaseId) throws Exception {
+    if (releaseId == null) {
+      throw new Exception("argument 'releaseId' is null");
+    }
+
+    try {
+      final ArtifactSoapList artifactSoapList = frsAppSoap.getArtifactListResolvedInRelease(sessionKey, releaseId);
+      final ArtifactSoapRow[] artifactSoapRows = artifactSoapList.getDataRows();
+
+      final List<ArtifactElement> artifactList = new LinkedList<>();
+      for (final ArtifactSoapRow artifactSoapRow: artifactSoapRows) {
+        artifactList.add(new ArtifactElement(artifactSoapRow));
+      }
+
+      return artifactList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get artifact list resolved in release [" + releaseId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get artifact list resolved in release [" + releaseId + "]", exception);
       throw exception;
     }
   }
