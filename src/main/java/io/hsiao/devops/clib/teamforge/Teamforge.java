@@ -4,6 +4,7 @@ import io.hsiao.devops.clib.exception.Exception;
 import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.LoggerProxy;
 import io.hsiao.devops.clib.utils.CommonUtils;
+import io.hsiao.devops.clib.utils.FileUtils;
 import io.hsiao.devops.clib.utils.ZipUtils;
 
 import java.io.File;
@@ -657,16 +658,8 @@ public final class Teamforge {
     }
 
     final File folder = new File(url + File.separator + objectId);
-    try {
-      org.apache.commons.io.FileUtils.deleteDirectory(folder);
-      org.apache.commons.io.FileUtils.forceMkdir(folder);
-    }
-    catch (java.lang.Exception ex) {
-      final Exception exception = new Exception("failed to initialize download directory [" + folder + "]");
-      exception.initCause(ex);
-      logger.log(Level.INFO, "failed to initialize download directory [" + folder + "]", exception);
-      throw exception;
-    }
+    FileUtils.rmdir(folder, false);
+    FileUtils.mkdir(folder);
 
     final List<AttachmentElement> attachmentList = listAttachments(objectId);
     for (final AttachmentElement attachment: attachmentList) {
@@ -693,15 +686,7 @@ public final class Teamforge {
 
     if (compress) {
       ZipUtils.pack(folder, new File(folder.toString() + ".zip"), verbose, compressEmpty);
-      try {
-        org.apache.commons.io.FileUtils.deleteDirectory(folder);
-      }
-      catch (java.lang.Exception ex) {
-        final Exception exception = new Exception("failed to delete temporary download directory [" + folder + "]");
-        exception.initCause(ex);
-        logger.log(Level.INFO, "failed to delete temporary download directory [" + folder + "]", exception);
-        throw exception;
-      }
+      FileUtils.rmdir(folder, false);
     }
   }
 
