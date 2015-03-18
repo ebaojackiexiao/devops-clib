@@ -71,5 +71,45 @@ public final class ReleaseData {
     return releaseSoapDO.getVersion();
   }
 
+  public void setDescription(final String description) throws Exception {
+    if (description == null) {
+      throw new Exception("argument 'description' is null");
+    }
+
+    releaseSoapDO.setDescription(description);
+  }
+
+  public void setDownloaded(final int downloaded) {
+    releaseSoapDO.setDownloaded(downloaded);
+  }
+
+  public void setMaturity(final String maturity) throws Exception {
+    if (maturity == null) {
+      throw new Exception("argument 'maturity' is null");
+    }
+
+    releaseSoapDO.setMaturity(maturity);
+  }
+
+  public void setStatus(final String status) throws Exception {
+    if (status == null) {
+      throw new Exception("argument 'status' is null");
+    }
+
+    releaseSoapDO.setStatus(status);
+  }
+
+  public void setTitle(final String title) throws Exception {
+    if (title == null) {
+      throw new Exception("argument 'title' is null");
+    }
+
+    releaseSoapDO.setTitle(title);
+  }
+
+  ReleaseSoapDO getReleaseSoapDO() {
+    return releaseSoapDO;
+  }
+
   private final ReleaseSoapDO releaseSoapDO;
 }

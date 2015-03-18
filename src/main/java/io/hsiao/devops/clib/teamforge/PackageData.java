@@ -67,5 +67,33 @@ public final class PackageData {
     return packageSoapDO.getVersion();
   }
 
+  public void setDescription(final String description) throws Exception {
+    if (description == null) {
+      throw new Exception("argument 'description' is null");
+    }
+
+    packageSoapDO.setDescription(description);
+  }
+
+  public void setDownloaded(final int downloaded) {
+    packageSoapDO.setDownloaded(downloaded);
+  }
+
+  public void setIsPublished(final boolean isPublished) {
+    packageSoapDO.setIsPublished(isPublished);
+  }
+
+  public void setTitle(final String title) throws Exception {
+    if (title == null) {
+      throw new Exception("argument 'title' is null");
+    }
+
+    packageSoapDO.setTitle(title);
+  }
+
+  PackageSoapDO getPackageSoapDO() {
+    return packageSoapDO;
+  }
+
   private final PackageSoapDO packageSoapDO;
 }

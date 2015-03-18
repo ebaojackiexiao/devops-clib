@@ -513,6 +513,22 @@ public final class Teamforge {
     }
   }
 
+  public void setPackageData(final PackageData packageData) throws Exception {
+    if (packageData == null) {
+      throw new Exception("argument 'packageData' is null");
+    }
+
+    try {
+      frsAppSoap.setPackageData(sessionKey, packageData.getPackageSoapDO());
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to set package data [" + packageData.getTitle() + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to set package data [" + packageData.getTitle() + "]", exception);
+      throw exception;
+    }
+  }
+
   public String getReleaseId(final String packageId, final String name) throws Exception {
     if (packageId == null) {
       throw new Exception("argument 'packageId' is null");
@@ -571,6 +587,22 @@ public final class Teamforge {
       final Exception exception = new Exception("failed to get release data [" + releaseId + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to get release data [" + releaseId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public void setReleaseData(final ReleaseData releaseData) throws Exception {
+    if (releaseData == null) {
+      throw new Exception("argument 'releaseData' is null");
+    }
+
+    try {
+      frsAppSoap.setReleaseData(sessionKey, releaseData.getReleaseSoapDO());
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to set release data [" + releaseData.getTitle() + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to set release data [" + releaseData.getTitle() + "]", exception);
       throw exception;
     }
   }
