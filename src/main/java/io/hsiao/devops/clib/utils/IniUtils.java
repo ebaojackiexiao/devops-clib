@@ -27,19 +27,62 @@ public final class IniUtils {
       throw new Exception("argument 'data' is null");
     }
 
-    String escaped = data;
+    final StringBuilder escaped = new StringBuilder();
 
-    if (escaped.startsWith("\"") && escaped.endsWith("\"") && !escaped.endsWith("\\\"")) {
-      escaped = escaped.substring(1, escaped.length() - 1);
+    boolean invalid = false;
+    boolean quoted = false;
+
+    for (int idx = 0; idx < data.length(); ++idx) {
+      final char ch = data.charAt(idx);
+
+      if (ch == '\"') {
+        if ((idx == 0) && (idx + 1 != data.length())) {
+          quoted = true;
+          continue;
+        }
+        else if (quoted && (idx + 1 == data.length())) {
+          continue;
+        }
+        else {
+          invalid = true;
+          break;
+        }
+      }
+
+      if (ch == '\\') {
+        if (idx + 1 >= data.length()) {
+          invalid = true;
+          break;
+        }
+
+        final char nch = data.charAt(idx + 1);
+        if ((nch == '\\') || (nch == '\"')) {
+          ++idx;
+          escaped.append(nch);
+        }
+        else {
+          invalid = true;
+          break;
+        }
+      }
+
+      if (quoted && (idx + 1 == data.length()) && (ch != '\"')) {
+        invalid = true;
+        break;
+      }
+
+      if (ch != '\\') {
+        escaped.append(ch);
+      }
     }
 
-    if (escaped.startsWith("\"") || escaped.matches("\\A.*[^\\\\]\\\".*\\Z")) {
+    if (invalid) {
       final Exception exception = new Exception("failed to load ini source, invalid data [" + data + "]");
       LoggerProxy.getLogger().log(Level.INFO, "failed to load ini source, invalid data [" + data + "]", exception);
       throw exception;
     }
 
-    return escaped.replaceAll("\\\\\"", "\"");
+    return escaped.toString();
   }
 
   public void load(final File source, final boolean simpleMode) throws Exception {
@@ -209,6 +252,25 @@ public final class IniUtils {
     }
 
     return getProperties(new Section(majorKey, minorKey));
+  }
+
+  public List<String> getSimpleProperties(final String majorKey, final String minorKey) throws Exception {
+    if (majorKey == null) {
+      throw new Exception("argument 'majorKey' is null");
+    }
+
+    if (minorKey == null) {
+      throw new Exception("argument 'minorKey' is null");
+    }
+
+    final Map<String, String> map = getProperties(new Section(majorKey, minorKey));
+    final List<String> properties = new LinkedList<>();
+
+    for (final Map.Entry<String, String> entry: map.entrySet()) {
+      properties.add(entry.getKey());
+    }
+
+    return properties;
   }
 
   public static final class Section {
