@@ -31,6 +31,14 @@ public final class UserData {
     return userSoapDO.getAlternateEmail3();
   }
 
+  public String getCreatedBy() {
+    return userSoapDO.getCreatedBy();
+  }
+
+  public Date getCreatedDate() {
+    return userSoapDO.getCreatedDate();
+  }
+
   public String getEmail() {
     return userSoapDO.getEmail();
   }
@@ -39,8 +47,20 @@ public final class UserData {
     return userSoapDO.getFullName();
   }
 
+  public String getId() {
+    return userSoapDO.getId();
+  }
+
   public Date getLastLogin() {
     return userSoapDO.getLastLogin();
+  }
+
+  public String getLastModifiedBy() {
+    return userSoapDO.getLastModifiedBy();
+  }
+
+  public Date getLastModifiedDate() {
+    return userSoapDO.getLastModifiedDate();
   }
 
   public String getLicenseType() {
@@ -73,6 +93,10 @@ public final class UserData {
 
   public String getUserName() {
     return userSoapDO.getUsername();
+  }
+
+  public int getVersion() {
+    return userSoapDO.getVersion();
   }
 
   public void setAlternateEmail1(final String alternateEmail1) {
