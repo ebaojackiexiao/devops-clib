@@ -2,7 +2,9 @@ package io.hsiao.devops.clib.teamforge;
 
 import io.hsiao.devops.clib.exception.Exception;
 import io.hsiao.devops.clib.exception.RuntimeException;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 import io.hsiao.devops.clib.utils.CommonUtils;
 import io.hsiao.devops.clib.utils.FileUtils;
 import io.hsiao.devops.clib.utils.ZipUtils;
@@ -20,8 +22,6 @@ import java.rmi.RemoteException;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -699,9 +699,8 @@ public final class Teamforge {
       final String rawFileId = attachment.getRawFileId();
 
       if (verbose) {
-        LoggerProxy.getGlobal().log(Level.INFO, "downloading attachment [" + objectId + "] [" + filename + "]");
+        logger.log(Level.INFO, "downloading attachment [" + objectId + "] [" + filename + "]");
       }
-      logger.log(Level.INFO, "downloading attachment [" + objectId + "] [" + filename + "] [" + rawFileId + "]");
 
       final File file = new File(folder.toString() + File.separator + filename);
       try (final FileOutputStream fos = new FileOutputStream(file)) {
@@ -738,9 +737,8 @@ public final class Teamforge {
           public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             try {
               if (verbose) {
-                LoggerProxy.getGlobal().log(Level.INFO, "uploading attachment [" + objectId + "] [" + file + "]");
+                logger.log(Level.INFO, "uploading attachment [" + objectId + "] [" + file + "]");
               }
-              LoggerProxy.getLogger().log(Level.INFO, "uploading attachment [" + objectId + "] [" + file + "]");
 
               final DataHandler handler = new DataHandler(new FileDataSource(file.toFile()));
               final String storedFileId = uploadFile(handler);
@@ -783,7 +781,8 @@ public final class Teamforge {
     }
   }
 
-  private final Logger logger = LoggerProxy.getLogger();
+  private static final Logger logger = LoggerFactory.getLogger(Teamforge.class);
+
   private final String serverUrl;
   private final ICollabNetSoap cemainSoap;
   private final IFileStorageAppSoap fileStorageAppSoap;

@@ -1,7 +1,10 @@
 package io.hsiao.devops.clib.utils;
 
 import io.hsiao.devops.clib.exception.Exception;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +80,7 @@ public final class IniUtils {
 
     if (invalid) {
       final Exception exception = new Exception("failed to load ini source, invalid data [" + data + "]");
-      LoggerProxy.getLogger().log(Level.INFO, "failed to load ini source, invalid data [" + data + "]", exception);
+      logger.log(Level.INFO, "failed to load ini source, invalid data [" + data + "]", exception);
       throw exception;
     }
 
@@ -96,7 +98,7 @@ public final class IniUtils {
     catch (IOException ex) {
       final Exception exception = new Exception("failed to load ini source");
       exception.initCause(ex);
-      LoggerProxy.getLogger().log(Level.INFO, "failed to load ini source", exception);
+      logger.log(Level.INFO, "failed to load ini source", exception);
       throw exception;
     }
   }
@@ -134,7 +136,7 @@ public final class IniUtils {
       else {
         if (!inSection) {
           final Exception exception = new Exception("failed to load ini source, invalid data [" + line + "]");
-          LoggerProxy.getLogger().log(Level.INFO, "failed to load ini source, invalid data [" + line + "]", exception);
+          logger.log(Level.INFO, "failed to load ini source, invalid data [" + line + "]", exception);
           sin.close();
           throw exception;
         }
@@ -164,14 +166,14 @@ public final class IniUtils {
             }
             else {
               final Exception exception = new Exception("failed to load ini source, invalid data [" + line + "]");
-              LoggerProxy.getLogger().log(Level.INFO, "failed to load ini source, invalid data [" + line + "]", exception);
+              logger.log(Level.INFO, "failed to load ini source, invalid data [" + line + "]", exception);
               sin.close();
               throw exception;
             }
           }
           else {
             final Exception exception = new Exception("failed to load ini source, invalid data [" + line + "]");
-            LoggerProxy.getLogger().log(Level.INFO, "failed to load ini source, invalid data [" + line + "]", exception);
+            logger.log(Level.INFO, "failed to load ini source, invalid data [" + line + "]", exception);
             sin.close();
             throw exception;
           }
@@ -183,7 +185,7 @@ public final class IniUtils {
 
     sin.close();
 
-    LoggerProxy.getLogger().log(Level.INFO, iniMap.toString());
+    logger.log(Level.DEBUG, iniMap.toString());
   }
 
   public List<Section> getSections() {
@@ -323,5 +325,6 @@ public final class IniUtils {
     private final String minorKey;
   }
 
+  private static final Logger logger = LoggerFactory.getLogger(IniUtils.class);
   private final Map<Section, Map<String, String>> iniMap;
 }

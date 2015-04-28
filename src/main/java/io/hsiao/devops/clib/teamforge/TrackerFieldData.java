@@ -1,13 +1,14 @@
 package io.hsiao.devops.clib.teamforge;
 
 import io.hsiao.devops.clib.exception.Exception;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import com.collabnet.ce.soap60.webservices.cemain.TrackerFieldSoapDO;
 import com.collabnet.ce.soap60.webservices.tracker.TrackerFieldValueSoapDO;
@@ -116,7 +117,7 @@ public final class TrackerFieldData {
 
     if (!map.containsKey(name)) {
       final Exception exception = new Exception("failed to get field type (field not found) [" + name + "]");
-      LoggerProxy.getLogger().log(Level.INFO, "failed to get field type (field not found) [" + name + "]", exception);
+      logger.log(Level.INFO, "failed to get field type (field not found) [" + name + "]", exception);
       throw exception;
     }
 
@@ -136,6 +137,8 @@ public final class TrackerFieldData {
 
     return TrackerFieldData.getFieldType(map, name);
   }
+
+  private static final Logger logger = LoggerFactory.getLogger(TrackerFieldData.class);
 
   private final TrackerFieldSoapDO trackerFieldSoapDO;
 

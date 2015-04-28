@@ -1,12 +1,14 @@
 package io.hsiao.devops.clib.utils;
 
 import io.hsiao.devops.clib.exception.Exception;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
 
 public final class CommonUtils {
   public static Properties loadProperties(final Class<?> object, final String name) throws Exception {
@@ -23,7 +25,7 @@ public final class CommonUtils {
     try (final InputStream ins = object.getResourceAsStream(name)) {
       if (ins == null) {
         final Exception exception = new Exception("failed to locate property file [" + name + "]");
-        LoggerProxy.getLogger().log(Level.INFO, "failed to locate property file [" + name + "]", exception);
+        logger.log(Level.INFO, "failed to locate property file [" + name + "]", exception);
         throw exception;
       }
 
@@ -32,7 +34,7 @@ public final class CommonUtils {
     catch (IOException ex) {
       final Exception exception = new Exception("failed to load properties");
       exception.initCause(ex);
-      LoggerProxy.getLogger().log(Level.INFO, "failed to load properties [" + object + "] [" + name + "]", exception);
+      logger.log(Level.INFO, "failed to load properties [" + object + "] [" + name + "]", exception);
       throw exception;
     }
 
@@ -52,7 +54,7 @@ public final class CommonUtils {
 
     if (value.isEmpty() && !allowEmpty) {
       final Exception exception = new Exception("failed to get property (property not found or may be empty) [" + name + "]");
-      LoggerProxy.getLogger().log(Level.INFO, "failed to get property (property not found or may be empty) [" + name + "]", exception);
+      logger.log(Level.INFO, "failed to get property (property not found or may be empty) [" + name + "]", exception);
       throw exception;
     }
 
@@ -68,7 +70,7 @@ public final class CommonUtils {
 
     if (value.isEmpty() && !allowEmpty) {
       final Exception exception = new Exception("failed to get system property (property not found or may be empty) [" + name + "]");
-      LoggerProxy.getLogger().log(Level.INFO, "failed to get system property (property not found or may be empty) [" + name + "]", exception);
+      logger.log(Level.INFO, "failed to get system property (property not found or may be empty) [" + name + "]", exception);
       throw exception;
     }
 
@@ -79,4 +81,6 @@ public final class CommonUtils {
   public static <T extends Throwable> void throwAs(final Throwable ex) throws T {
     throw (T) ex;
   }
+
+  private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
 }

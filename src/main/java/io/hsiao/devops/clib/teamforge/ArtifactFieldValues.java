@@ -1,15 +1,16 @@
 package io.hsiao.devops.clib.teamforge;
 
 import io.hsiao.devops.clib.exception.Exception;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.collabnet.ce.soap60.types.SoapFieldValues;
 
@@ -237,7 +238,8 @@ final class ArtifactFieldValues {
     }
   }
 
-  private final Logger logger = LoggerProxy.getLogger();
+  private static final Logger logger = LoggerFactory.getLogger(ArtifactFieldValues.class);
+
   private final SoapFieldValues soapFieldValues;
   private Map<String, Object> soapFieldsNameIndexMap;
 }

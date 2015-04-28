@@ -1,7 +1,10 @@
 package io.hsiao.devops.clib.utils;
 
 import io.hsiao.devops.clib.exception.Exception;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +18,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 import java.util.Set;
-import java.util.logging.Level;
 
 public final class FileUtils {
   public static boolean isEmptyDirectory(final File dir) throws Exception {
@@ -29,7 +31,7 @@ public final class FileUtils {
     catch (IOException ex) {
       final Exception exception = new Exception("failed to check directory empty status [" + dir + "]");
       exception.initCause(ex);
-      LoggerProxy.getLogger().log(Level.INFO, "failed to check directory empty status [" + dir + "]", exception);
+      logger.log(Level.INFO, "failed to check directory empty status [" + dir + "]", exception);
       throw exception;
     }
   }
@@ -73,7 +75,7 @@ public final class FileUtils {
     catch (IOException ex) {
       final Exception exception = new Exception("failed to remove directory [" + dir + "]");
       exception.initCause(ex);
-      LoggerProxy.getLogger().log(Level.INFO, "failed to remove directory [" + dir + "]", exception);
+      logger.log(Level.INFO, "failed to remove directory [" + dir + "]", exception);
       throw exception;
     }
   }
@@ -89,8 +91,10 @@ public final class FileUtils {
     catch (IOException ex) {
       final Exception exception = new Exception("failed to make directory [" + dir + "]");
       exception.initCause(ex);
-      LoggerProxy.getLogger().log(Level.INFO, "failed to make directory [" + dir + "]", exception);
+      logger.log(Level.INFO, "failed to make directory [" + dir + "]", exception);
       throw exception;
     }
   }
+
+  private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 }

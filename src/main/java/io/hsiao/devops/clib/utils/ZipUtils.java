@@ -2,7 +2,9 @@ package io.hsiao.devops.clib.utils;
 
 import io.hsiao.devops.clib.exception.Exception;
 import io.hsiao.devops.clib.exception.RuntimeException;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -31,16 +32,14 @@ public final class ZipUtils {
 
     if (FileUtils.isEmptyDirectory(source) && !zipEmpty) {
       if (verbose) {
-        LoggerProxy.getGlobal().log(Level.INFO, "packing [" + source + "] skipped: no entries found");
+        logger.log(Level.INFO, "packing [" + source + "] skipped: no entries found");
       }
-      LoggerProxy.getLogger().log(Level.INFO, "packing [" + source + "] skipped: no entries found");
       return;
     }
 
     if (verbose) {
-      LoggerProxy.getGlobal().log(Level.INFO, "packing [" + source + "] to [" + dest + "]");
+      logger.log(Level.INFO, "packing [" + source + "] to [" + dest + "]");
     }
-    LoggerProxy.getLogger().log(Level.INFO, "packing [" + source + "] to [" + dest + "]");
 
     try (final FileOutputStream fos = new FileOutputStream(dest);
       final ZipOutputStream zos = new ZipOutputStream(fos)) {
@@ -49,11 +48,8 @@ public final class ZipUtils {
         new SimpleFileVisitor<Path>() {
           @Override
           public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            try {
-              LoggerProxy.getLogger().log(Level.INFO, "packing file entry [" + file + "] into [" + dest + "]");
-            }
-            catch (Exception exception) {
-              CommonUtils.<RuntimeException>throwAs(exception);
+            if (verbose) {
+              logger.log(Level.INFO, "packing file entry [" + file + "] into [" + dest + "]");
             }
 
             final Path relative = source.toPath().toAbsolutePath().relativize(file.toAbsolutePath());
@@ -78,17 +74,14 @@ public final class ZipUtils {
               throw exc;
             }
 
-            try {
-              final Path relative = source.toPath().toAbsolutePath().relativize(dir.toAbsolutePath());
-              if (!relative.toString().isEmpty()) {
-                LoggerProxy.getLogger().log(Level.INFO, "packing dir entry [" + dir + "] into [" + dest + "]");
-
-                zos.putNextEntry(new ZipEntry(relative.toString() + "/"));
-                zos.closeEntry();
+            final Path relative = source.toPath().toAbsolutePath().relativize(dir.toAbsolutePath());
+            if (!relative.toString().isEmpty()) {
+              if (verbose) {
+                logger.log(Level.INFO, "packing dir entry [" + dir + "] into [" + dest + "]");
               }
-            }
-            catch (Exception exception) {
-              CommonUtils.<RuntimeException>throwAs(exception);
+
+              zos.putNextEntry(new ZipEntry(relative.toString() + "/"));
+              zos.closeEntry();
             }
 
             return FileVisitResult.CONTINUE;
@@ -98,8 +91,10 @@ public final class ZipUtils {
     catch (IOException ex) {
       final Exception exception = new Exception("failed to pack [" + source + "] to [" + dest + "]");
       exception.initCause(ex);
-      LoggerProxy.getLogger().log(Level.INFO, "failed to pack [" + source + "] to [" + dest + "]", exception);
+      logger.log(Level.INFO, "failed to pack [" + source + "] to [" + dest + "]", exception);
       throw exception;
     }
   }
+
+  private static final Logger logger = LoggerFactory.getLogger(ZipUtils.class);
 }

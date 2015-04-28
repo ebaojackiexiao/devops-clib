@@ -1,15 +1,16 @@
 package io.hsiao.devops.clib.mail;
 
 import io.hsiao.devops.clib.exception.Exception;
-import io.hsiao.devops.clib.logging.LoggerProxy;
+
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -305,7 +306,8 @@ public final class Mail {
     }
   }
 
-  private final Logger logger = LoggerProxy.getLogger();
+  private static final Logger logger = LoggerFactory.getLogger(Mail.class);
+
   private final Session session;
   private final MimeMessage message;
   private final MimeBodyPart messageBodyPart;
