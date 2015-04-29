@@ -7,6 +7,6 @@ public final class RuntimeException extends java.lang.RuntimeException {
   }
 
   public RuntimeException(final String message) {
-    super("[clib]>>> " + message);
+    super(message);
   }
 }
