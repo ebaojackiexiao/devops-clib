@@ -311,7 +311,7 @@ public final class Mail {
   private final MimeBodyPart messageBodyPart;
   private final List<MimeBodyPart> attachsBodyPart;
 
-  public static final String RecipientTypeBCC = "BCC";
-  public static final String RecipientTypeCC = "CC";
-  public static final String RecipientTypeTO = "TO";
+  public static final String RecipientTypeBCC = Message.RecipientType.BCC.toString();
+  public static final String RecipientTypeCC = Message.RecipientType.CC.toString();
+  public static final String RecipientTypeTO = Message.RecipientType.TO.toString();
 }
