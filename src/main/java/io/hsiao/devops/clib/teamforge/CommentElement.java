@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.cemain.CommentSoapRow;
 
 public final class CommentElement {
-  CommentElement(final CommentSoapRow commentSoapRow) throws Exception {
+  CommentElement(final CommentSoapRow commentSoapRow) {
     if (commentSoapRow == null) {
-      throw new Exception("argument 'commentSoapRow' is null");
+      throw new RuntimeException("argument 'commentSoapRow' is null");
     }
 
     this.commentSoapRow = commentSoapRow;

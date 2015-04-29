@@ -1,13 +1,13 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import com.collabnet.ce.soap60.webservices.tracker.TrackerFieldValueSoapDO;
 
 public final class TrackerFieldValueData {
-  TrackerFieldValueData(final TrackerFieldValueSoapDO trackerFieldValueSoapDO) throws Exception {
+  TrackerFieldValueData(final TrackerFieldValueSoapDO trackerFieldValueSoapDO) {
     if (trackerFieldValueSoapDO == null) {
-      throw new Exception("argument 'trackerFieldValueSoapDO' is null");
+      throw new RuntimeException("argument 'trackerFieldValueSoapDO' is null");
     }
 
     this.trackerFieldValueSoapDO = trackerFieldValueSoapDO;

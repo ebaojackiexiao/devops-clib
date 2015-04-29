@@ -1,7 +1,7 @@
 package io.hsiao.devops.clib.utils;
 
 import io.hsiao.devops.clib.exception.Exception;
-
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
@@ -13,11 +13,11 @@ import java.util.Properties;
 public final class CommonUtils {
   public static Properties loadProperties(final Class<?> object, final String name) throws Exception {
     if (object == null) {
-      throw new Exception("argument 'object' is null");
+      throw new RuntimeException("argument 'object' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final Properties props = new Properties();
@@ -43,11 +43,11 @@ public final class CommonUtils {
 
   public static String getProperty(final Properties props, final String name, final boolean allowEmpty) throws Exception {
     if (props == null) {
-      throw new Exception("argument 'props' is null");
+      throw new RuntimeException("argument 'props' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final String value = props.getProperty(name, "");
@@ -63,7 +63,7 @@ public final class CommonUtils {
 
   public static String getSystemProperty(final String name, final boolean allowEmpty) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final String value = System.getProperty(name, "");

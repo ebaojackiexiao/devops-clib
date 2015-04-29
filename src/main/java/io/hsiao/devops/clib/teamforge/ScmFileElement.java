@@ -1,13 +1,13 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import com.collabnet.ce.soap60.webservices.scm.ScmFile2SoapRow;
 
 public final class ScmFileElement {
-  ScmFileElement(final ScmFile2SoapRow scmFile2SoapRow) throws Exception {
+  ScmFileElement(final ScmFile2SoapRow scmFile2SoapRow) {
     if (scmFile2SoapRow == null) {
-      throw new Exception("argument 'scmFile2SoapRow' is null");
+      throw new RuntimeException("argument 'scmFile2SoapRow' is null");
     }
 
     this.scmFile2SoapRow = scmFile2SoapRow;
@@ -32,6 +32,6 @@ public final class ScmFileElement {
   public String getVersion() {
     return scmFile2SoapRow.getVersion();
   }
-  
+
   private final ScmFile2SoapRow scmFile2SoapRow;
 }

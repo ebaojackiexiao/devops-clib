@@ -1,7 +1,7 @@
 package io.hsiao.devops.clib.excel;
 
 import io.hsiao.devops.clib.exception.Exception;
-
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
@@ -24,9 +24,9 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public final class Excel {
-  public Excel(final String name) throws Exception {
+  public Excel(final String name) {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     workBook = new XSSFWorkbook();
@@ -39,9 +39,9 @@ public final class Excel {
     creationHelper = workBook.getCreationHelper();
   }
 
-  public Sheet getSheet(final String name) throws Exception {
+  public Sheet getSheet(final String name) {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final String safeName = WorkbookUtil.createSafeSheetName(name, sheetNameReplaceChar);
@@ -51,7 +51,7 @@ public final class Excel {
 
   public Sheet createSheet(final String name) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final String safeName = WorkbookUtil.createSafeSheetName(name, sheetNameReplaceChar);
@@ -67,7 +67,7 @@ public final class Excel {
 
   private Row getRow(final String name, final int rowNum) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final Sheet sheet = getSheet(name);
@@ -82,7 +82,7 @@ public final class Excel {
 
   public void autoSizeColumn(final String name, final int colNum, final boolean useMergedCells) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final Sheet sheet = getSheet(name);
@@ -200,11 +200,11 @@ public final class Excel {
 
   public void writeHeaders(final String name, final List<String> headers, final CellStyle style) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     if (headers == null) {
-      throw new Exception("argument 'headers' is null");
+      throw new RuntimeException("argument 'headers' is null");
     }
 
     for (int colNum = 0; colNum < headers.size(); ++colNum) {
@@ -227,7 +227,7 @@ public final class Excel {
 
   public Cell writeToCell(final String name, final int rowNum, final int colNum, final Object value, final CellStyle style) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     Sheet sheet = getSheet(name);

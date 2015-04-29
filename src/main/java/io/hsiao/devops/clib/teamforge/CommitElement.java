@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.scm.CommitSoapRow;
 
 public final class CommitElement {
-  CommitElement(final CommitSoapRow commitSoapRow) throws Exception {
+  CommitElement(final CommitSoapRow commitSoapRow) {
     if (commitSoapRow == null) {
-      throw new Exception("argument 'commitSoapRow' is null");
+      throw new RuntimeException("argument 'commitSoapRow' is null");
     }
 
     this.commitSoapRow = commitSoapRow;

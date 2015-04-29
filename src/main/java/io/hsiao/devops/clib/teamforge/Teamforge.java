@@ -59,7 +59,7 @@ import com.collabnet.ce.soap60.webservices.tracker.ITrackerAppSoap;
 public final class Teamforge {
   public Teamforge(final String serverUrl, final int timeoutMs) throws Exception {
     if (serverUrl == null) {
-      throw new Exception("argument 'serverUrl' is null");
+      throw new RuntimeException("argument 'serverUrl' is null");
     }
 
     this.serverUrl = serverUrl;
@@ -85,11 +85,11 @@ public final class Teamforge {
 
   public void login(final String username, final String password) throws Exception {
     if (username == null) {
-      throw new Exception("argument 'username' is null");
+      throw new RuntimeException("argument 'username' is null");
     }
 
     if (password == null) {
-      throw new Exception("argument 'password' is null");
+      throw new RuntimeException("argument 'password' is null");
     }
 
     try {
@@ -154,7 +154,7 @@ public final class Teamforge {
 
   public UserData getUserData(final String username) throws Exception {
     if (username == null) {
-      throw new Exception("argument 'username' is null");
+      throw new RuntimeException("argument 'username' is null");
     }
 
     try {
@@ -171,7 +171,7 @@ public final class Teamforge {
 
   public void setUserData(final UserData userData) throws Exception {
     if (userData == null) {
-      throw new Exception("argument 'userData' is null");
+      throw new RuntimeException("argument 'userData' is null");
     }
 
     try {
@@ -187,7 +187,7 @@ public final class Teamforge {
 
   public String getProjectId(final String name) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final List<ProjectElement> projectList = getProjectList(false);
@@ -204,7 +204,7 @@ public final class Teamforge {
 
   public long getProjectDiskUsage(final String name) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final String projectId = getProjectId(name);
@@ -272,7 +272,7 @@ public final class Teamforge {
 
   public ArtifactData getArtifactData(final String artifactId) throws Exception {
     if (artifactId == null) {
-      throw new Exception("argument 'artifactId' is null");
+      throw new RuntimeException("argument 'artifactId' is null");
     }
 
     try {
@@ -290,7 +290,7 @@ public final class Teamforge {
   public void setArtifactData(final ArtifactData artifactData, final String comment,
     final String attachmentFileName, final String attachmentMimeType, final String attachmentFileId) throws Exception {
     if (artifactData == null) {
-      throw new Exception("argument 'artifactData' is null");
+      throw new RuntimeException("argument 'artifactData' is null");
     }
 
     try {
@@ -307,7 +307,7 @@ public final class Teamforge {
 
   public List<TrackerFieldData> getTrackerFieldDataList(final String trackerId) throws Exception {
     if (trackerId == null) {
-      throw new Exception("argument 'trackerId' is null");
+      throw new RuntimeException("argument 'trackerId' is null");
     }
 
     try {
@@ -330,7 +330,7 @@ public final class Teamforge {
 
   public List<AssociationElement> getAssociationList(final String objectId) throws Exception {
     if (objectId == null) {
-      throw new Exception("argument 'objectId' is null");
+      throw new RuntimeException("argument 'objectId' is null");
     }
 
     try {
@@ -354,7 +354,7 @@ public final class Teamforge {
 
   public List<String> getScmAssociationList(final String objectId) throws Exception {
     if (objectId == null) {
-      throw new Exception("argument 'objectId' is null");
+      throw new RuntimeException("argument 'objectId' is null");
     }
 
     final List<String> scmAssociationList = new LinkedList<>();
@@ -371,7 +371,7 @@ public final class Teamforge {
 
   public List<ScmFileElement> getScmFileList(final String artifactId) throws Exception {
     if (artifactId == null) {
-      throw new Exception("argument 'artifactId' is null");
+      throw new RuntimeException("argument 'artifactId' is null");
     }
 
     final List<ScmFileElement> scmFileList = new LinkedList<>();
@@ -387,7 +387,7 @@ public final class Teamforge {
 
   public CommitData getCommitData(final String commitId) throws Exception {
     if (commitId == null) {
-      throw new Exception("argument 'commitId' is null");
+      throw new RuntimeException("argument 'commitId' is null");
     }
 
     try {
@@ -404,7 +404,7 @@ public final class Teamforge {
 
   public List<CommentElement> getCommentList(final String objectId) throws Exception {
     if (objectId == null) {
-      throw new Exception("argument 'objectId' is null");
+      throw new RuntimeException("argument 'objectId' is null");
     }
 
     try {
@@ -429,7 +429,7 @@ public final class Teamforge {
   public List<ProjectElement> getProjectListForUser(final String username,
       final boolean fetchHierarchyPath, final boolean includeGroupMembership) throws Exception {
     if (username == null) {
-      throw new Exception("argument 'username' is null");
+      throw new RuntimeException("argument 'username' is null");
     }
 
     try {
@@ -453,11 +453,11 @@ public final class Teamforge {
 
   public String getPackageId(final String projectId, final String name) throws Exception {
     if (projectId == null) {
-      throw new Exception("argument 'projectId' is null");
+      throw new RuntimeException("argument 'projectId' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final List<PackageElement> packageList = getPackageList(projectId);
@@ -474,7 +474,7 @@ public final class Teamforge {
 
   public List<PackageElement> getPackageList(final String projectId) throws Exception {
     if (projectId == null) {
-      throw new Exception("argument 'projectId' is null");
+      throw new RuntimeException("argument 'projectId' is null");
     }
 
     try {
@@ -498,7 +498,7 @@ public final class Teamforge {
 
   public PackageData getPackageData(final String packageId) throws Exception {
     if (packageId == null) {
-      throw new Exception("argument 'packageId' is null");
+      throw new RuntimeException("argument 'packageId' is null");
     }
 
     try {
@@ -515,7 +515,7 @@ public final class Teamforge {
 
   public void setPackageData(final PackageData packageData) throws Exception {
     if (packageData == null) {
-      throw new Exception("argument 'packageData' is null");
+      throw new RuntimeException("argument 'packageData' is null");
     }
 
     try {
@@ -531,11 +531,11 @@ public final class Teamforge {
 
   public String getReleaseId(final String packageId, final String name) throws Exception {
     if (packageId == null) {
-      throw new Exception("argument 'packageId' is null");
+      throw new RuntimeException("argument 'packageId' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final List<ReleaseElement> releaseList = getReleaseList(packageId);
@@ -552,7 +552,7 @@ public final class Teamforge {
 
   public List<ReleaseElement> getReleaseList(final String packageId) throws Exception {
     if (packageId == null) {
-      throw new Exception("argument 'packageId' is null");
+      throw new RuntimeException("argument 'packageId' is null");
     }
 
     try {
@@ -576,7 +576,7 @@ public final class Teamforge {
 
   public ReleaseData getReleaseData(final String releaseId) throws Exception {
     if (releaseId == null) {
-      throw new Exception("argument 'releaseId' is null");
+      throw new RuntimeException("argument 'releaseId' is null");
     }
 
     try {
@@ -593,7 +593,7 @@ public final class Teamforge {
 
   public void setReleaseData(final ReleaseData releaseData) throws Exception {
     if (releaseData == null) {
-      throw new Exception("argument 'releaseData' is null");
+      throw new RuntimeException("argument 'releaseData' is null");
     }
 
     try {
@@ -609,7 +609,7 @@ public final class Teamforge {
 
   public List<ArtifactElement> getArtifactListReportedInRelease(final String releaseId) throws Exception {
     if (releaseId == null) {
-      throw new Exception("argument 'releaseId' is null");
+      throw new RuntimeException("argument 'releaseId' is null");
     }
 
     try {
@@ -633,7 +633,7 @@ public final class Teamforge {
 
   public List<ArtifactElement> getArtifactListResolvedInRelease(final String releaseId) throws Exception {
     if (releaseId == null) {
-      throw new Exception("argument 'releaseId' is null");
+      throw new RuntimeException("argument 'releaseId' is null");
     }
 
     try {
@@ -657,7 +657,7 @@ public final class Teamforge {
 
   public List<AttachmentElement> listAttachments(final String objectId) throws Exception {
     if (objectId == null) {
-      throw new Exception("argument 'objectId' is null");
+      throw new RuntimeException("argument 'objectId' is null");
     }
 
     try {
@@ -682,11 +682,11 @@ public final class Teamforge {
   public void downloadAttachments(final String objectId, final String url, final boolean verbose,
     final boolean compress, final boolean compressEmpty) throws Exception {
     if (objectId == null) {
-      throw new Exception("argument 'objectId' is null");
+      throw new RuntimeException("argument 'objectId' is null");
     }
 
     if (url == null) {
-      throw new Exception("argument 'url' is null");
+      throw new RuntimeException("argument 'url' is null");
     }
 
     final File folder = new File(url + File.separator + objectId);
@@ -723,11 +723,11 @@ public final class Teamforge {
 
   public void uploadAttachments(final File source, final String objectId, final String comment, final boolean verbose) throws Exception {
     if (source == null) {
-      throw new Exception("argument 'source' is null");
+      throw new RuntimeException("argument 'source' is null");
     }
 
     if (objectId == null) {
-      throw new Exception("argument 'objectId' is null");
+      throw new RuntimeException("argument 'objectId' is null");
     }
 
     try {
@@ -765,7 +765,7 @@ public final class Teamforge {
 
   public String uploadFile(final DataHandler handler) throws Exception {
     if (handler == null) {
-      throw new Exception("argument 'handler' is null");
+      throw new RuntimeException("argument 'handler' is null");
     }
 
     try {

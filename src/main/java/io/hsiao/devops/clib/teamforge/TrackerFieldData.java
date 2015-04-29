@@ -14,9 +14,9 @@ import com.collabnet.ce.soap60.webservices.cemain.TrackerFieldSoapDO;
 import com.collabnet.ce.soap60.webservices.tracker.TrackerFieldValueSoapDO;
 
 public final class TrackerFieldData {
-  TrackerFieldData(final TrackerFieldSoapDO trackerFieldSoapDO) throws Exception {
+  TrackerFieldData(final TrackerFieldSoapDO trackerFieldSoapDO) {
     if (trackerFieldSoapDO == null) {
-      throw new Exception("argument 'trackerFieldSoapDO' is null");
+      throw new RuntimeException("argument 'trackerFieldSoapDO' is null");
     }
 
     this.trackerFieldSoapDO = trackerFieldSoapDO;
@@ -46,7 +46,7 @@ public final class TrackerFieldData {
     return trackerFieldSoapDO.getFieldType();
   }
 
-  public List<TrackerFieldValueData> getFieldValues() throws Exception {
+  public List<TrackerFieldValueData> getFieldValues() {
     final TrackerFieldValueSoapDO[] trackerFieldValueSoapDOs = trackerFieldSoapDO.getFieldValues();
 
     final List<TrackerFieldValueData> trackerFieldValueDataList = new LinkedList<>();
@@ -93,9 +93,9 @@ public final class TrackerFieldData {
     return trackerFieldSoapDO.getValueType();
   }
 
-  public static Map<String, TrackerFieldData> toMap(final List<TrackerFieldData> trackerFieldDataList) throws Exception {
+  public static Map<String, TrackerFieldData> toMap(final List<TrackerFieldData> trackerFieldDataList) {
     if (trackerFieldDataList == null) {
-      throw new Exception("argument 'trackerFieldDataList' is null");
+      throw new RuntimeException("argument 'trackerFieldDataList' is null");
     }
 
     final Map<String, TrackerFieldData> map = new LinkedHashMap<>();
@@ -108,11 +108,11 @@ public final class TrackerFieldData {
 
   public static String getFieldType(final Map<String, TrackerFieldData> map, final String name) throws Exception {
     if (map == null) {
-      throw new Exception("argument 'map' is null");
+      throw new RuntimeException("argument 'map' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     if (!map.containsKey(name)) {
@@ -126,11 +126,11 @@ public final class TrackerFieldData {
 
   public static String getFieldType(final List<TrackerFieldData> trackerFieldDataList, final String name) throws Exception {
     if (trackerFieldDataList == null) {
-      throw new Exception("argument 'trackerFieldDataList' is null");
+      throw new RuntimeException("argument 'trackerFieldDataList' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final Map<String, TrackerFieldData> map = TrackerFieldData.toMap(trackerFieldDataList);

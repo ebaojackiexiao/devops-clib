@@ -1,7 +1,7 @@
 package io.hsiao.devops.clib.utils;
 
 import io.hsiao.devops.clib.exception.Exception;
-
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
@@ -26,7 +26,7 @@ public final class IniUtils {
 
   private String escape(final String data) throws Exception {
     if (data == null) {
-      throw new Exception("argument 'data' is null");
+      throw new RuntimeException("argument 'data' is null");
     }
 
     final StringBuilder escaped = new StringBuilder();
@@ -89,7 +89,7 @@ public final class IniUtils {
 
   public void load(final File source, final boolean simpleMode) throws Exception {
     if (source == null) {
-      throw new Exception("argument 'source' is null");
+      throw new RuntimeException("argument 'source' is null");
     }
 
     try (final FileInputStream fis = new FileInputStream(source)) {
@@ -105,7 +105,7 @@ public final class IniUtils {
 
   public void load(final InputStream source, final boolean simpleMode) throws Exception {
     if (source == null) {
-      throw new Exception("argument 'source' is null");
+      throw new RuntimeException("argument 'source' is null");
     }
 
     String majorKey = null;
@@ -198,13 +198,13 @@ public final class IniUtils {
     return sections;
   }
 
-  public String getProperty(final Section section, final String name) throws Exception {
+  public String getProperty(final Section section, final String name) {
     if (section == null) {
-      throw new Exception("argument 'section' is null");
+      throw new RuntimeException("argument 'section' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     final Map<String, String> properties = iniMap.get(section);
@@ -215,26 +215,26 @@ public final class IniUtils {
     return properties.get(name);
   }
 
-  public String getProperty(final String majorKey, final String minorKey, final String name) throws Exception {
+  public String getProperty(final String majorKey, final String minorKey, final String name) {
     if (majorKey == null) {
-      throw new Exception("argument 'majorKey' is null");
+      throw new RuntimeException("argument 'majorKey' is null");
     }
 
     if (minorKey == null) {
-      throw new Exception("argument 'minorKey' is null");
+      throw new RuntimeException("argument 'minorKey' is null");
     }
 
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     return getProperty(new Section(majorKey, minorKey), name);
   }
 
   @SuppressWarnings("unchecked")
-  public Map<String, String> getProperties(final Section section) throws Exception {
+  public Map<String, String> getProperties(final Section section) {
     if (section == null) {
-      throw new Exception("argument 'section' is null");
+      throw new RuntimeException("argument 'section' is null");
     }
 
     if (iniMap.containsKey(section)) {
@@ -244,25 +244,25 @@ public final class IniUtils {
     return new LinkedHashMap<>();
   }
 
-  public Map<String, String> getProperties(final String majorKey, final String minorKey) throws Exception {
+  public Map<String, String> getProperties(final String majorKey, final String minorKey) {
     if (majorKey == null) {
-      throw new Exception("argument 'majorKey' is null");
+      throw new RuntimeException("argument 'majorKey' is null");
     }
 
     if (minorKey == null) {
-      throw new Exception("argument 'minorKey' is null");
+      throw new RuntimeException("argument 'minorKey' is null");
     }
 
     return getProperties(new Section(majorKey, minorKey));
   }
 
-  public List<String> getSimpleProperties(final String majorKey, final String minorKey) throws Exception {
+  public List<String> getSimpleProperties(final String majorKey, final String minorKey) {
     if (majorKey == null) {
-      throw new Exception("argument 'majorKey' is null");
+      throw new RuntimeException("argument 'majorKey' is null");
     }
 
     if (minorKey == null) {
-      throw new Exception("argument 'minorKey' is null");
+      throw new RuntimeException("argument 'minorKey' is null");
     }
 
     final Map<String, String> map = getProperties(new Section(majorKey, minorKey));
@@ -276,13 +276,13 @@ public final class IniUtils {
   }
 
   public static final class Section {
-    public Section(final String majorKey, final String minorKey) throws Exception {
+    public Section(final String majorKey, final String minorKey) {
       if (majorKey == null) {
-        throw new Exception("argument 'majorKey' is null");
+        throw new RuntimeException("argument 'majorKey' is null");
       }
 
       if (minorKey == null) {
-        throw new Exception("argument 'minorKey' is null");
+        throw new RuntimeException("argument 'minorKey' is null");
       }
 
       this.majorKey = majorKey;

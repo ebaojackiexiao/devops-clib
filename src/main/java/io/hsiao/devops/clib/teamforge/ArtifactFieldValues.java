@@ -1,7 +1,7 @@
 package io.hsiao.devops.clib.teamforge;
 
 import io.hsiao.devops.clib.exception.Exception;
-
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
@@ -17,7 +17,7 @@ import com.collabnet.ce.soap60.types.SoapFieldValues;
 final class ArtifactFieldValues {
   ArtifactFieldValues(final SoapFieldValues soapFieldValues) throws Exception {
     if (soapFieldValues == null) {
-      throw new Exception("argument 'soapFieldValues' is null");
+      throw new RuntimeException("argument 'soapFieldValues' is null");
     }
 
     this.soapFieldValues = soapFieldValues;
@@ -68,11 +68,11 @@ final class ArtifactFieldValues {
 
   Object getFieldValue(final String name, final String type) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     if (type == null) {
-      throw new Exception("argument 'type' is null");
+      throw new RuntimeException("argument 'type' is null");
     }
 
     if (!soapFieldsNameIndexMap.containsKey(name)) {
@@ -115,7 +115,7 @@ final class ArtifactFieldValues {
 
   String getFieldValueType(final String name) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     if (!soapFieldsNameIndexMap.containsKey(name)) {
@@ -145,11 +145,11 @@ final class ArtifactFieldValues {
 
   void setFieldValue(final String name, final String type, final Object value) throws Exception {
     if (name == null) {
-      throw new Exception("argument 'name' is null");
+      throw new RuntimeException("argument 'name' is null");
     }
 
     if (type == null) {
-      throw new Exception("argument 'type' is null");
+      throw new RuntimeException("argument 'type' is null");
     }
 
     if (!soapFieldsNameIndexMap.containsKey(name)) {

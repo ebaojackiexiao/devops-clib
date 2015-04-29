@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.cemain.ProjectSoapRow;
 
 public final class ProjectElement {
-  ProjectElement(final ProjectSoapRow projectSoapRow) throws Exception {
+  ProjectElement(final ProjectSoapRow projectSoapRow) {
     if (projectSoapRow == null) {
-      throw new Exception("argument 'projectSoapRow' is null");
+      throw new RuntimeException("argument 'projectSoapRow' is null");
     }
 
     this.projectSoapRow = projectSoapRow;

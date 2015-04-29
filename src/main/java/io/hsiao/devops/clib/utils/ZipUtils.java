@@ -23,11 +23,11 @@ import java.util.zip.ZipOutputStream;
 public final class ZipUtils {
   public static void pack(final File source, final File dest, final boolean verbose, final boolean zipEmpty) throws Exception {
     if (source == null) {
-      throw new Exception("argument 'source' is null");
+      throw new RuntimeException("argument 'source' is null");
     }
 
     if (dest == null) {
-      throw new Exception("argument 'dest' is null");
+      throw new RuntimeException("argument 'dest' is null");
     }
 
     if (FileUtils.isEmptyDirectory(source) && !zipEmpty) {

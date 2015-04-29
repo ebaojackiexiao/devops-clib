@@ -1,6 +1,6 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,9 +10,9 @@ import com.collabnet.ce.soap60.webservices.scm.ScmFile2SoapList;
 import com.collabnet.ce.soap60.webservices.scm.ScmFile2SoapRow;
 
 public final class CommitData {
-  CommitData(final Commit2SoapDO commit2SoapDO) throws Exception {
+  CommitData(final Commit2SoapDO commit2SoapDO) {
     if (commit2SoapDO == null) {
-      throw new Exception("argument 'commit2SoapDO' is null");
+      throw new RuntimeException("argument 'commit2SoapDO' is null");
     }
 
     this.commit2SoapDO = commit2SoapDO;
@@ -26,7 +26,7 @@ public final class CommitData {
     return commit2SoapDO.getCreatedByFullname();
   }
 
-  public List<ScmFileElement> getFiles() throws Exception {
+  public List<ScmFileElement> getFiles() {
     final ScmFile2SoapList scmFile2SoapList = commit2SoapDO.getFiles();
     final ScmFile2SoapRow[] scmFile2SoapRows = scmFile2SoapList.getDataRows();
 

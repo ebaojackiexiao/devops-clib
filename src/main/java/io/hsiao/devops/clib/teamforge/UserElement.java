@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapRow;
 
 public final class UserElement {
-  UserElement(final UserSoapRow userSoapRow) throws Exception {
+  UserElement(final UserSoapRow userSoapRow) {
     if (userSoapRow == null) {
-      throw new Exception("argument 'userSoapRow' is null");
+      throw new RuntimeException("argument 'userSoapRow' is null");
     }
 
     this.userSoapRow = userSoapRow;

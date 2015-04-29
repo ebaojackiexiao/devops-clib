@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.cemain.AssociationSoapRow;
 
 public final class AssociationElement {
-  AssociationElement(final AssociationSoapRow associationSoapRow) throws Exception {
+  AssociationElement(final AssociationSoapRow associationSoapRow) {
     if (associationSoapRow == null) {
-      throw new Exception("argument 'associationSoapRow' is null");
+      throw new RuntimeException("argument 'associationSoapRow' is null");
     }
 
     this.associationSoapRow = associationSoapRow;

@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.cemain.UserSoapDO;
 
 public final class UserData {
-  UserData(final UserSoapDO userSoapDO) throws Exception {
+  UserData(final UserSoapDO userSoapDO) {
     if (userSoapDO == null) {
-      throw new Exception("argument 'userSoapDO' is null");
+      throw new RuntimeException("argument 'userSoapDO' is null");
     }
 
     this.userSoapDO = userSoapDO;
@@ -100,38 +100,74 @@ public final class UserData {
   }
 
   public void setAlternateEmail1(final String alternateEmail1) {
+    if (alternateEmail1 == null) {
+      throw new RuntimeException("argument 'alternateEmail1' is null");
+    }
+
     userSoapDO.setAlternateEmail1(alternateEmail1);
   }
 
   public void setAlternateEmail2(final String alternateEmail2) {
+    if (alternateEmail2 == null) {
+      throw new RuntimeException("argument 'alternateEmail2' is null");
+    }
+
     userSoapDO.setAlternateEmail1(alternateEmail2);
   }
 
   public void setAlternateEmail3(final String alternateEmail3) {
+    if (alternateEmail3 == null) {
+      throw new RuntimeException("argument 'alternateEmail3' is null");
+    }
+
     userSoapDO.setAlternateEmail1(alternateEmail3);
   }
 
   public void setEmail(final String email) {
+    if (email == null) {
+      throw new RuntimeException("argument 'email' is null");
+    }
+
     userSoapDO.setEmail(email);
   }
 
   public void setFullName(final String fullName) {
+    if (fullName == null) {
+      throw new RuntimeException("argument 'fullName' is null");
+    }
+
     userSoapDO.setFullName(fullName);
   }
 
   public void setLastLogin(final Date lastLogin) {
+    if (lastLogin == null) {
+      throw new RuntimeException("argument 'lastLogin' is null");
+    }
+
     userSoapDO.setLastLogin(lastLogin);
   }
 
   public void setLicenseType(final String licenseType) {
+    if (licenseType == null) {
+      throw new RuntimeException("argument 'licenseType' is null");
+    }
+
     userSoapDO.setLicenseType(licenseType);
   }
 
   public void setLocale(final String locale) {
+    if (locale == null) {
+      throw new RuntimeException("argument 'locale' is null");
+    }
+
     userSoapDO.setLocale(locale);
   }
 
   public void setOrganization(final String organization) {
+    if (organization == null) {
+      throw new RuntimeException("argument 'organization' is null");
+    }
+
     userSoapDO.setOrganization(organization);
   }
 
@@ -140,6 +176,10 @@ public final class UserData {
   }
 
   public void setStatus(final String status) {
+    if (status == null) {
+      throw new RuntimeException("argument 'status' is null");
+    }
+
     userSoapDO.setStatus(status);
   }
 
@@ -148,10 +188,18 @@ public final class UserData {
   }
 
   public void setTimeZone(final String timeZone) {
+    if (timeZone == null) {
+      throw new RuntimeException("argument 'timeZone' is null");
+    }
+
     userSoapDO.setTimeZone(timeZone);
   }
 
   public void setUserName(final String userName) {
+    if (userName == null) {
+      throw new RuntimeException("argument 'userName' is null");
+    }
+
     userSoapDO.setUsername(userName);
   }
 

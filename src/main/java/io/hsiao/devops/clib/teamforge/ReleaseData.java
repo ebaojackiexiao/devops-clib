@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapDO;
 
 public final class ReleaseData {
-  ReleaseData(final ReleaseSoapDO releaseSoapDO) throws Exception {
+  ReleaseData(final ReleaseSoapDO releaseSoapDO) {
     if (releaseSoapDO == null) {
-      throw new Exception("argument 'releaseSoapDO' is null");
+      throw new RuntimeException("argument 'releaseSoapDO' is null");
     }
 
     this.releaseSoapDO = releaseSoapDO;
@@ -71,9 +71,9 @@ public final class ReleaseData {
     return releaseSoapDO.getVersion();
   }
 
-  public void setDescription(final String description) throws Exception {
+  public void setDescription(final String description) {
     if (description == null) {
-      throw new Exception("argument 'description' is null");
+      throw new RuntimeException("argument 'description' is null");
     }
 
     releaseSoapDO.setDescription(description);
@@ -83,25 +83,25 @@ public final class ReleaseData {
     releaseSoapDO.setDownloaded(downloaded);
   }
 
-  public void setMaturity(final String maturity) throws Exception {
+  public void setMaturity(final String maturity) {
     if (maturity == null) {
-      throw new Exception("argument 'maturity' is null");
+      throw new RuntimeException("argument 'maturity' is null");
     }
 
     releaseSoapDO.setMaturity(maturity);
   }
 
-  public void setStatus(final String status) throws Exception {
+  public void setStatus(final String status) {
     if (status == null) {
-      throw new Exception("argument 'status' is null");
+      throw new RuntimeException("argument 'status' is null");
     }
 
     releaseSoapDO.setStatus(status);
   }
 
-  public void setTitle(final String title) throws Exception {
+  public void setTitle(final String title) {
     if (title == null) {
-      throw new Exception("argument 'title' is null");
+      throw new RuntimeException("argument 'title' is null");
     }
 
     releaseSoapDO.setTitle(title);

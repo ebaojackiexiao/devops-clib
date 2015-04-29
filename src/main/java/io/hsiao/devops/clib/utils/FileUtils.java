@@ -1,7 +1,7 @@
 package io.hsiao.devops.clib.utils;
 
 import io.hsiao.devops.clib.exception.Exception;
-
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
@@ -22,7 +22,7 @@ import java.util.Set;
 public final class FileUtils {
   public static boolean isEmptyDirectory(final File dir) throws Exception {
     if (dir == null) {
-      throw new Exception("argument 'dir' is null");
+      throw new RuntimeException("argument 'dir' is null");
     }
 
     try (final DirectoryStream<Path> entries = Files.newDirectoryStream(dir.toPath())) {
@@ -38,7 +38,7 @@ public final class FileUtils {
 
   public static void rmdir(final File dir, final boolean followLinks) throws Exception {
     if (dir == null) {
-      throw new Exception("argument 'dir' is null");
+      throw new RuntimeException("argument 'dir' is null");
     }
 
     final boolean exists;
@@ -82,7 +82,7 @@ public final class FileUtils {
 
   public static File mkdir(final File dir) throws Exception {
     if (dir == null) {
-      throw new Exception("argument 'dir' is null");
+      throw new RuntimeException("argument 'dir' is null");
     }
 
     try {

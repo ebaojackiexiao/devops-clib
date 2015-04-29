@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.cemain.AttachmentSoapRow;
 
 public final class AttachmentElement {
-  AttachmentElement(final AttachmentSoapRow attachmentSoapRow) throws Exception {
+  AttachmentElement(final AttachmentSoapRow attachmentSoapRow) {
     if (attachmentSoapRow == null) {
-      throw new Exception("argument 'attachmentSoapRow' is null");
+      throw new RuntimeException("argument 'attachmentSoapRow' is null");
     }
 
     this.attachmentSoapRow = attachmentSoapRow;

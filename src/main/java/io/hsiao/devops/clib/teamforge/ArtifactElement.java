@@ -1,15 +1,15 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapRow;
 
 public final class ArtifactElement {
-  ArtifactElement(final ArtifactSoapRow artifactSoapRow) throws Exception {
+  ArtifactElement(final ArtifactSoapRow artifactSoapRow) {
     if (artifactSoapRow == null) {
-      throw new Exception("argument 'artifactSoapRow' is null");
+      throw new RuntimeException("argument 'artifactSoapRow' is null");
     }
 
     this.artifactSoapRow = artifactSoapRow;

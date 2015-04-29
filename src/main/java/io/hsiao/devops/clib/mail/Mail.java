@@ -24,9 +24,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 public final class Mail {
-  public Mail(final Properties props) throws Exception {
+  public Mail(final Properties props) {
     if (props == null) {
-      throw new Exception("argument 'props' is null");
+      throw new RuntimeException("argument 'props' is null");
     }
 
     session = Session.getInstance(props, null);
@@ -37,11 +37,11 @@ public final class Mail {
 
   public void setContent(final Object object, final String type) throws Exception {
     if (object == null) {
-      throw new Exception("argument 'object' is null");
+      throw new RuntimeException("argument 'object' is null");
     }
 
     if (type == null) {
-      throw new Exception("argument 'type' is null");
+      throw new RuntimeException("argument 'type' is null");
     }
 
     try {
@@ -57,7 +57,7 @@ public final class Mail {
 
   public void setFrom(final String address) throws Exception {
     if (address == null) {
-      throw new Exception("argument 'address' is null");
+      throw new RuntimeException("argument 'address' is null");
     }
 
     try {
@@ -73,11 +73,11 @@ public final class Mail {
 
   public void addRecipient(final String type, final String address) throws Exception {
     if (type == null) {
-      throw new Exception("argument 'type' is null");
+      throw new RuntimeException("argument 'type' is null");
     }
 
     if (address == null) {
-      throw new Exception("argument 'address' is null");
+      throw new RuntimeException("argument 'address' is null");
     }
 
     final Message.RecipientType recipientType;
@@ -105,11 +105,11 @@ public final class Mail {
 
   public void setRecipients(final String type, final String addresses) throws Exception {
     if (type == null) {
-      throw new Exception("argument 'type' is null");
+      throw new RuntimeException("argument 'type' is null");
     }
 
     if (addresses == null) {
-      throw new Exception("argument 'addresses' is null");
+      throw new RuntimeException("argument 'addresses' is null");
     }
 
     final Message.RecipientType recipientType;
@@ -136,11 +136,11 @@ public final class Mail {
 
   public void setRecipients(final String type, final List<String> addresses) throws Exception {
     if (type == null) {
-      throw new Exception("argument 'type' is null");
+      throw new RuntimeException("argument 'type' is null");
     }
 
     if (addresses == null) {
-      throw new Exception("argument 'addresses' is null");
+      throw new RuntimeException("argument 'addresses' is null");
     }
 
     final Message.RecipientType recipientType;
@@ -175,15 +175,15 @@ public final class Mail {
 
   public void setRecipients(final String type, final List<String> addresses, final String domain) throws Exception {
     if (type == null) {
-      throw new Exception("argument 'type' is null");
+      throw new RuntimeException("argument 'type' is null");
     }
 
     if (addresses == null) {
-      throw new Exception("argument 'addresses' is null");
+      throw new RuntimeException("argument 'addresses' is null");
     }
 
     if (domain == null) {
-      throw new Exception("argument 'domain' is null");
+      throw new RuntimeException("argument 'domain' is null");
     }
 
     final Message.RecipientType recipientType;
@@ -224,7 +224,7 @@ public final class Mail {
 
   public void setSentDate(final Date date) throws Exception {
     if (date == null) {
-      throw new Exception("argument 'date' is null");
+      throw new RuntimeException("argument 'date' is null");
     }
 
     try {
@@ -240,11 +240,11 @@ public final class Mail {
 
   public void setSubject(final String subject, final String charset) throws Exception {
     if (subject == null) {
-      throw new Exception("argument 'subject' is null");
+      throw new RuntimeException("argument 'subject' is null");
     }
 
     if (charset == null) {
-      throw new Exception("argument 'charset' is null");
+      throw new RuntimeException("argument 'charset' is null");
     }
 
     try {
@@ -260,7 +260,7 @@ public final class Mail {
 
   public void attachFile(final String file) throws Exception {
     if (file == null) {
-      throw new Exception("argument 'file' is null");
+      throw new RuntimeException("argument 'file' is null");
     }
 
     final MimeBodyPart attachBodyPart = new MimeBodyPart();
@@ -279,11 +279,11 @@ public final class Mail {
 
   public void send(final String username, final String password) throws Exception {
     if (username == null) {
-      throw new Exception("argument 'username' is null");
+      throw new RuntimeException("argument 'username' is null");
     }
 
     if (password == null) {
-      throw new Exception("argument 'password' is null");
+      throw new RuntimeException("argument 'password' is null");
     }
 
     try {
