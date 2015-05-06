@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -273,6 +275,22 @@ public final class IniUtils {
     }
 
     return properties;
+  }
+
+  public static void sort(final List<Section> sections) {
+    if (sections == null) {
+      throw new RuntimeException("argument 'sections' is null");
+    }
+
+    Collections.sort(sections, new Comparator<Section>() {
+      @Override
+      public int compare(Section s1, Section s2) {
+        if (s1.getMajorKey().equals(s2.getMajorKey())) {
+          return s1.getMinorKey().compareTo(s2.getMinorKey());
+        }
+        return s1.getMajorKey().compareTo(s2.getMajorKey());
+      }
+    });
   }
 
   public static final class Section {
