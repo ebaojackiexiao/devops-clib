@@ -55,6 +55,9 @@ import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapDO;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapList;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapRow;
 import com.collabnet.ce.soap60.webservices.tracker.ITrackerAppSoap;
+import com.collabnet.ce.soap60.webservices.tracker.TrackerSoapDO;
+import com.collabnet.ce.soap60.webservices.tracker.TrackerSoapList;
+import com.collabnet.ce.soap60.webservices.tracker.TrackerSoapRow;
 
 public final class Teamforge {
   public Teamforge(final String serverUrl, final int timeoutMs) throws Exception {
@@ -301,6 +304,84 @@ public final class Teamforge {
       final Exception exception = new Exception("failed to set artifact data [" + artifactData.getId() + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to set artifact data [" + artifactData.getId() + "]", exception);
+      throw exception;
+    }
+  }
+
+  public String getTrackerId(final String projectId, final String name) throws Exception {
+    if (projectId == null) {
+      throw new RuntimeException("argument 'projectId' is null");
+    }
+
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    final List<TrackerElement> trackerList = getTrackerList(projectId);
+    for (final TrackerElement trackerElement: trackerList) {
+      if (trackerElement.getTitle().equals(name)) {
+        return trackerElement.getId();
+      }
+    }
+
+    final Exception exception = new Exception("failed to get tracker id [" + projectId + "] [" + name + "]");
+    logger.log(Level.INFO, "failed to get tracker id [" + projectId + "] [" + name + "]", exception);
+    throw exception;
+  }
+
+  public TrackerData getTrackerData(final String trackerId) throws Exception {
+    if (trackerId == null) {
+      throw new RuntimeException("argument 'trackerId' is null");
+    }
+
+    try {
+      final TrackerSoapDO trackerSoapDO = trackerAppSoap.getTrackerData(sessionKey, trackerId);
+      return new TrackerData(trackerSoapDO);
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get tracker data [" + trackerId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get tracker data [" + trackerId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public void setTrackerData(final TrackerData trackerData) throws Exception {
+    if (trackerData == null) {
+      throw new RuntimeException("argument 'trackerData' is null");
+    }
+
+    try {
+      trackerAppSoap.setTrackerData(sessionKey, trackerData.getTrackerSoapDO());
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to set tracker data [" + trackerData.getId() + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to set tracker data [" + trackerData.getId() + "]", exception);
+      throw exception;
+    }
+  }
+
+  public List<TrackerElement> getTrackerList(final String projectId) throws Exception {
+    if (projectId == null) {
+      throw new RuntimeException("argument 'projectId' is null");
+    }
+
+    try {
+      final List<TrackerElement> trackerList = new LinkedList<>();
+
+      final TrackerSoapList trackerSoapList = trackerAppSoap.getTrackerList(sessionKey, projectId);
+      final TrackerSoapRow[] trackerSoapRows = trackerSoapList.getDataRows();
+      for (final TrackerSoapRow trackerSoapRow: trackerSoapRows) {
+        trackerList.add(new TrackerElement(trackerSoapRow));
+      }
+
+      return trackerList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get tracker list [" + projectId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get tracker list [" + projectId + "]", exception);
       throw exception;
     }
   }
