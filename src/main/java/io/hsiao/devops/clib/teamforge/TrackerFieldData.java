@@ -1,6 +1,7 @@
 package io.hsiao.devops.clib.teamforge;
 
 import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.collabnet.ce.soap60.webservices.cemain.TrackerFieldSoapDO;
+import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapDO;
 import com.collabnet.ce.soap60.webservices.tracker.TrackerFieldValueSoapDO;
 
 public final class TrackerFieldData {
@@ -115,13 +117,38 @@ public final class TrackerFieldData {
       throw new RuntimeException("argument 'name' is null");
     }
 
-    if (!map.containsKey(name)) {
-      final Exception exception = new Exception("failed to get field type (field not found) [" + name + "]");
-      logger.log(Level.INFO, "failed to get field type (field not found) [" + name + "]", exception);
-      throw exception;
-    }
+    switch (name.toLowerCase()) {
+      // System defined fields
+      case "artifact id":
+      case "artifactid":
+        return FIELD_TYPE_TEXT;
+      case "assigned to":
+      case "assignedto":
+        return FIELD_TYPE_SINGLE_SELECT;
+      case "attachment":
+        return FIELD_TYPE_TEXT;
+      case "comment":
+        return FIELD_TYPE_TEXT;
+      case "description":
+        return FIELD_TYPE_TEXT;
+      case "id":
+        return FIELD_TYPE_TEXT;
+      case "priority":
+        return FIELD_TYPE_SINGLE_SELECT;
+      case "title":
+        return FIELD_TYPE_TEXT;
+      // Configurable and User defined fields
+      default:
+        final String internalName = toInternalName(name);
 
-    return map.get(name).getFieldType();
+        if (!map.containsKey(internalName)) {
+          final Exception exception = new Exception("failed to get field type (field not found) [" + name + "]");
+          logger.log(Level.INFO, "failed to get field type (field not found) [" + name + "]", exception);
+          throw exception;
+        }
+
+        return map.get(internalName).getFieldType();
+    }
   }
 
   public static String getFieldType(final List<TrackerFieldData> trackerFieldDataList, final String name) throws Exception {
@@ -136,6 +163,115 @@ public final class TrackerFieldData {
     final Map<String, TrackerFieldData> map = TrackerFieldData.toMap(trackerFieldDataList);
 
     return TrackerFieldData.getFieldType(map, name);
+  }
+
+  public static boolean isSystemDefined(final String name) {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    switch (name.toLowerCase()) {
+      case "artifact id":
+      case "artifactid":
+      case "assigned to":
+      case "assignedto":
+      case "attachment":
+      case "comment":
+      case "description":
+      case "id":
+      case "priority":
+      case "title":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public static boolean isConfigurable(final String name) {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    switch (name.toLowerCase()) {
+      case "actual effort":
+      case "actualeffort":
+      case "auto summing":
+      case "autosumming":
+      case "calculate effort":
+      case "calculateeffort":
+      case "category":
+      case "customer":
+      case "estimated effort":
+      case "estimatedeffort":
+      case "fixed in release":
+      case "fixedinrelease":
+      case "group":
+      case "planning folder":
+      case "planningfolder":
+      case "points":
+      case "remaining effort":
+      case "remainingeffort":
+      case "reported in release":
+      case "reportedinrelease":
+      case "status":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public static boolean isUserDefined(final String name) {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    return !(isSystemDefined(name) || isConfigurable(name));
+  }
+
+  static String toInternalName(final String name) {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    switch (name.toLowerCase()) {
+      // Configurable fields
+      case "actual effort":
+      case "actualeffort":
+        return ArtifactSoapDO.COLUMN_ACTUAL_EFFORT;
+      case "auto summing":
+      case "autosumming":
+      case "calculate effort":
+      case "calculateeffort":
+        return ArtifactSoapDO.COLUMN_AUTOSUMMING;
+      case "category":
+        return ArtifactSoapDO.COLUMN_CATEGORY;
+      case "customer":
+        return ArtifactSoapDO.COLUMN_CUSTOMER;
+      case "estimated effort":
+      case "estimatedeffort":
+        return ArtifactSoapDO.COLUMN_ESTIMATED_EFFORT;
+      case "fixed in release":
+      case "fixedinrelease":
+        return ArtifactSoapDO.COLUMN_RESOLVED_IN_RELEASE_TITLE;
+      case "group":
+        return ArtifactSoapDO.COLUMN_ARTIFACT_GROUP;
+      case "planning folder":
+      case "planningfolder":
+        return ArtifactSoapDO.COLUMN_PLANNING_FOLDER_TITLE;
+      case "points":
+        return ArtifactSoapDO.COLUMN_POINTS;
+      case "remaining effort":
+      case "remainingeffort":
+        return ArtifactSoapDO.COLUMN_REMAINING_EFFORT;
+      case "reported in release":
+      case "reportedinrelease":
+        return ArtifactSoapDO.COLUMN_REPORTED_IN_RELEASE_TITLE;
+      case "status":
+        return ArtifactSoapDO.COLUMN_STATUS;
+      default:
+        // System defined and User defined fields return intact
+        return name;
+    }
   }
 
   private static final Logger logger = LoggerFactory.getLogger(TrackerFieldData.class);
