@@ -49,6 +49,12 @@ import com.collabnet.ce.soap60.webservices.frs.PackageSoapRow;
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapDO;
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapList;
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapRow;
+import com.collabnet.ce.soap60.webservices.planning.ArtifactsInPlanningFolderSoapList;
+import com.collabnet.ce.soap60.webservices.planning.ArtifactsInPlanningFolderSoapRow;
+import com.collabnet.ce.soap60.webservices.planning.IPlanningAppSoap;
+import com.collabnet.ce.soap60.webservices.planning.PlanningFolder4SoapDO;
+import com.collabnet.ce.soap60.webservices.planning.PlanningFolder4SoapList;
+import com.collabnet.ce.soap60.webservices.planning.PlanningFolder4SoapRow;
 import com.collabnet.ce.soap60.webservices.scm.Commit2SoapDO;
 import com.collabnet.ce.soap60.webservices.scm.IScmAppSoap;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapDO;
@@ -71,6 +77,7 @@ public final class Teamforge {
       cemainSoap = (ICollabNetSoap) ClientSoapStubFactory.getSoapStub(ICollabNetSoap.class, serverUrl, timeoutMs);
       fileStorageAppSoap = (IFileStorageAppSoap) ClientSoapStubFactory.getSoapStub(IFileStorageAppSoap.class, serverUrl, timeoutMs);
       frsAppSoap = (IFrsAppSoap) ClientSoapStubFactory.getSoapStub(IFrsAppSoap.class, serverUrl, timeoutMs);
+      planningAppSoap = (IPlanningAppSoap) ClientSoapStubFactory.getSoapStub(IPlanningAppSoap.class, serverUrl, timeoutMs);
       scmAppSoap = (IScmAppSoap) ClientSoapStubFactory.getSoapStub(IScmAppSoap.class, serverUrl, timeoutMs);
       trackerAppSoap = (ITrackerAppSoap) ClientSoapStubFactory.getSoapStub(ITrackerAppSoap.class, serverUrl, timeoutMs);
     }
@@ -862,12 +869,108 @@ public final class Teamforge {
     }
   }
 
+  public List<PlanningFolderElement> getPlanningFolderList(final String parentId, final boolean recursive) throws Exception {
+    if (parentId == null) {
+      throw new RuntimeException("argument 'parentId' is null");
+    }
+
+    try {
+      final PlanningFolder4SoapList planningFolderSoapList = planningAppSoap.getPlanningFolder4List(sessionKey, parentId, recursive);
+      final PlanningFolder4SoapRow[] planningFolderSoapRows = planningFolderSoapList.getDataRows();
+
+      final List<PlanningFolderElement> planningFolderList = new LinkedList<>();
+      for (final PlanningFolder4SoapRow planningFolderSoapRow: planningFolderSoapRows) {
+        planningFolderList.add(new PlanningFolderElement(planningFolderSoapRow));
+      }
+
+      return planningFolderList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get planning folder list [" + parentId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get planning folder list [" + parentId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public String getPlanningFolderId(final String parentId, final String name, final boolean recursive) throws Exception {
+    if (parentId == null) {
+      throw new RuntimeException("argument 'parentId' is null");
+    }
+
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    final List<PlanningFolderElement> planningFolderList = getPlanningFolderList(parentId, recursive);
+    for (final PlanningFolderElement planningFolderElement: planningFolderList) {
+      if (planningFolderElement.getTitle().equals(name)) {
+        return planningFolderElement.getId();
+      }
+    }
+
+    final Exception exception = new Exception("failed to get planning folder id [" + parentId + "] [" + name + "]");
+    logger.log(Level.INFO, "failed to get planning folder id [" + parentId + "] [" + name + "]", exception);
+    throw exception;
+  }
+
+  public PlanningFolderData getPlanningFolderData(final String planningFolderId) throws Exception {
+    if (planningFolderId == null) {
+      throw new RuntimeException("argument 'planningFolderId' is null");
+    }
+
+    try {
+      final PlanningFolder4SoapDO planningFolderSoapDO = planningAppSoap.getPlanningFolder4Data(sessionKey, planningFolderId);
+      return new PlanningFolderData(planningFolderSoapDO);
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get planning folder data [" + planningFolderId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get planning folder data [" + planningFolderId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public List<ArtifactElementInPlanningFolder> getArtifactListInPlanningFolder(final String parentId,
+      final List<FilterElement> filters, boolean recursive) throws Exception {
+    if (parentId == null) {
+      throw new RuntimeException("argument 'parentId' is null");
+    }
+
+    SoapFilter[] soapFilters = null;
+    if (filters != null) {
+      soapFilters = new SoapFilter[filters.size()];
+      for (int idx = 0; idx < filters.size(); ++ idx) {
+        soapFilters[idx] = filters.get(idx).getSoapFilter();
+      }
+    }
+
+    try {
+      final ArtifactsInPlanningFolderSoapList artifactsInPlanningFolderSoapList = planningAppSoap.getArtifactListInPlanningFolder(sessionKey, parentId, soapFilters, recursive);
+      final ArtifactsInPlanningFolderSoapRow[] artifactsInPlanningFolderSoapRows = artifactsInPlanningFolderSoapList.getDataRows();
+
+      final List<ArtifactElementInPlanningFolder> artifactListInPlanningFolder = new LinkedList<>();
+      for (final ArtifactsInPlanningFolderSoapRow artifactsInPlanningFolderSoapRow: artifactsInPlanningFolderSoapRows) {
+        artifactListInPlanningFolder.add(new ArtifactElementInPlanningFolder(artifactsInPlanningFolderSoapRow));
+      }
+
+      return artifactListInPlanningFolder;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get artifact list in planning folder [" + parentId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get artifact list in planning folder [" + parentId + "]", exception);
+      throw exception;
+    }
+  }
+
   private static final Logger logger = LoggerFactory.getLogger(Teamforge.class);
 
   private final String serverUrl;
   private final ICollabNetSoap cemainSoap;
   private final IFileStorageAppSoap fileStorageAppSoap;
   private final IFrsAppSoap frsAppSoap;
+  private final IPlanningAppSoap planningAppSoap;
   private final IScmAppSoap scmAppSoap;
   private final ITrackerAppSoap trackerAppSoap;
   private String username;
