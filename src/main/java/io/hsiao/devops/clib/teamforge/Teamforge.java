@@ -27,6 +27,7 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
 import com.collabnet.ce.soap60.types.SoapFilter;
+import com.collabnet.ce.soap60.types.SoapSortKey;
 import com.collabnet.ce.soap60.webservices.ClientSoapStubFactory;
 import com.collabnet.ce.soap60.webservices.cemain.AssociationSoapList;
 import com.collabnet.ce.soap60.webservices.cemain.AssociationSoapRow;
@@ -57,6 +58,8 @@ import com.collabnet.ce.soap60.webservices.planning.PlanningFolder4SoapList;
 import com.collabnet.ce.soap60.webservices.planning.PlanningFolder4SoapRow;
 import com.collabnet.ce.soap60.webservices.scm.Commit2SoapDO;
 import com.collabnet.ce.soap60.webservices.scm.IScmAppSoap;
+import com.collabnet.ce.soap60.webservices.tracker.ArtifactDetailSoapList;
+import com.collabnet.ce.soap60.webservices.tracker.ArtifactDetailSoapRow;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapDO;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapList;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactSoapRow;
@@ -739,6 +742,64 @@ public final class Teamforge {
       final Exception exception = new Exception("failed to get artifact list resolved in release [" + releaseId + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to get artifact list resolved in release [" + releaseId + "]", exception);
+      throw exception;
+    }
+  }
+
+  public List<ArtifactDetailElement> getArtifactDetailList(final String project, final String tracker,
+      final List<FilterElement> filters, final List<SortKeyElement> sortKeys) throws Exception {
+    if (project == null) {
+      throw new RuntimeException("argument 'project' is null");
+    }
+
+    if (tracker == null) {
+      throw new RuntimeException("argument 'tracker' is null");
+    }
+
+    final String projectId = getProjectId(project);
+    final String trackerId = getTrackerId(projectId, tracker);
+
+    return getArtifactDetailList(trackerId, filters, sortKeys);
+  }
+
+  public List<ArtifactDetailElement> getArtifactDetailList(final String trackerId,
+      final List<FilterElement> filters, final List<SortKeyElement> sortKeys) throws Exception {
+    if (trackerId == null) {
+      throw new RuntimeException("argument 'trackerId' is null");
+    }
+
+    SoapFilter[] soapFilters = null;
+    if (filters != null) {
+      soapFilters = new SoapFilter[filters.size()];
+      for (int idx = 0; idx < filters.size(); ++idx) {
+        soapFilters[idx] = filters.get(idx).getSoapFilter();
+      }
+    }
+
+    SoapSortKey[] soapSortKeys = null;
+    if (sortKeys != null) {
+      soapSortKeys = new SoapSortKey[sortKeys.size()];
+      for (int idx = 0; idx < sortKeys.size(); ++idx) {
+        soapSortKeys[idx] = sortKeys.get(idx).getSoapSortKey();
+      }
+    }
+
+    try {
+      final ArtifactDetailSoapList artifactDetailSoapList = trackerAppSoap.getArtifactDetailList(sessionKey, trackerId, null,
+          soapFilters, soapSortKeys, 0, -1, false, true);
+      final ArtifactDetailSoapRow[] artifactDetailSoapRows = artifactDetailSoapList.getDataRows();
+
+      final List<ArtifactDetailElement> artifactDetailList = new LinkedList<>();
+      for (final ArtifactDetailSoapRow artifactDetailSoapRow: artifactDetailSoapRows) {
+        artifactDetailList.add(new ArtifactDetailElement(artifactDetailSoapRow));
+      }
+
+      return artifactDetailList;
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to get artifact detail list [" + trackerId + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to get artifact detail list [" + trackerId + "]", exception);
       throw exception;
     }
   }
