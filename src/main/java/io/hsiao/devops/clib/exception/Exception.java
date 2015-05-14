@@ -9,4 +9,8 @@ public final class Exception extends java.lang.Exception {
   public Exception(final String message) {
     super(message);
   }
+
+  public Exception(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }
