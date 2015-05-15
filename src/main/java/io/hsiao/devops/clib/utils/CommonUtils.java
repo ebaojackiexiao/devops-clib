@@ -8,6 +8,7 @@ import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 public final class CommonUtils {
@@ -75,6 +76,24 @@ public final class CommonUtils {
     }
 
     return value;
+  }
+
+  public static <K, V> V getMapValue(final Map<K, V> map, final K name) throws Exception {
+    if (map == null) {
+      throw new RuntimeException("argument 'map' is null");
+    }
+
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    if (!map.containsKey(name)) {
+      final Exception exception = new Exception("failed to get map value (key not found) [" + name + "]");
+      logger.log(Level.INFO, "failed to get map value (key not found) [" + name + "]", exception);
+      throw exception;
+    }
+
+    return map.get(name);
   }
 
   @SuppressWarnings("unchecked")
