@@ -1,6 +1,7 @@
 package io.hsiao.devops.clib.mail;
 
 import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
@@ -32,6 +33,23 @@ public final class Mail {
     message = new MimeMessage(session);
     messageBodyPart = new MimeBodyPart();
     attachsBodyPart = new LinkedList<>();
+  }
+
+  public static Properties getProperties(final String smtpHost, final String smtpPort) {
+    if (smtpHost == null) {
+      throw new RuntimeException("argument 'smtpHost' is null");
+    }
+
+    if (smtpPort == null) {
+      throw new RuntimeException("argument 'smtpPort' is null");
+    }
+
+    final Properties props = new Properties();
+
+    props.put("mail.smtp.host", smtpHost);
+    props.put("mail.smtp.port", smtpPort);
+
+    return props;
   }
 
   public void setContent(final Object object, final String type) throws Exception {
