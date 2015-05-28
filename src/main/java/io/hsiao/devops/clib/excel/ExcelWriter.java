@@ -23,8 +23,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public final class Excel {
-  public Excel(final String name) {
+public final class ExcelWriter {
+  public ExcelWriter(final String name) {
     if (name == null) {
       throw new RuntimeException("argument 'name' is null");
     }
@@ -40,20 +40,10 @@ public final class Excel {
   }
 
   public Sheet getSheet(final String name) {
-    if (name == null) {
-      throw new RuntimeException("argument 'name' is null");
-    }
-
-    final String safeName = WorkbookUtil.createSafeSheetName(name, sheetNameReplaceChar);
-
-    return workBook.getSheet(safeName);
+    return workBook.getSheet(WorkbookUtil.createSafeSheetName(name, sheetNameReplaceChar));
   }
 
   public Sheet createSheet(final String name) throws Exception {
-    if (name == null) {
-      throw new RuntimeException("argument 'name' is null");
-    }
-
     final String safeName = WorkbookUtil.createSafeSheetName(name, sheetNameReplaceChar);
 
     if (workBook.getSheet(safeName) != null) {
@@ -66,11 +56,8 @@ public final class Excel {
   }
 
   private Row getRow(final String name, final int rowNum) throws Exception {
-    if (name == null) {
-      throw new RuntimeException("argument 'name' is null");
-    }
-
     final Sheet sheet = getSheet(name);
+
     if (sheet == null) {
       final Exception exception = new Exception("failed to get row (sheet not found) [" + name + "]");
       logger.log(Level.INFO, "failed to get row (sheet not found) [" + name + "]", exception);
@@ -81,11 +68,8 @@ public final class Excel {
   }
 
   public void autoSizeColumn(final String name, final int colNum, final boolean useMergedCells) throws Exception {
-    if (name == null) {
-      throw new RuntimeException("argument 'name' is null");
-    }
-
     final Sheet sheet = getSheet(name);
+
     if (sheet == null) {
       final Exception exception = new Exception("failed to autosize column (sheet not found) [" + name + "]");
       logger.log(Level.INFO, "failed to autosize column (sheet not found) [" + name + "]", exception);
@@ -199,10 +183,6 @@ public final class Excel {
   }
 
   public void writeHeaders(final String name, final List<String> headers, final CellStyle style) throws Exception {
-    if (name == null) {
-      throw new RuntimeException("argument 'name' is null");
-    }
-
     if (headers == null) {
       throw new RuntimeException("argument 'headers' is null");
     }
@@ -226,10 +206,6 @@ public final class Excel {
   }
 
   public Cell writeToCell(final String name, final int rowNum, final int colNum, final Object value, final CellStyle style) throws Exception {
-    if (name == null) {
-      throw new RuntimeException("argument 'name' is null");
-    }
-
     Sheet sheet = getSheet(name);
     if (sheet == null) {
       sheet = createSheet(name);
@@ -284,23 +260,27 @@ public final class Excel {
     return cell;
   }
 
+  public Cell writeToCell(final String name, final int rowNum, final int colNum, final Object value) throws Exception {
+    return writeToCell(name, rowNum, colNum, value, getDefaultCellStyle());
+  }
+
   public void close() throws Exception {
     try (final FileOutputStream fos = new FileOutputStream(workBookName)) {
       workBook.write(fos);
     }
     catch (IOException ex) {
-      final Exception exception = new Exception("failed to close workbook [" + workBookName + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to close workbook [" + workBookName + "]", ex);
       logger.log(Level.INFO, "failed to close workbook [" + workBookName + "]", exception);
       throw exception;
     }
   }
 
-  private static final Logger logger = LoggerFactory.getLogger(Excel.class);
+  private static final Logger logger = LoggerFactory.getLogger(ExcelWriter.class);
 
   private final Workbook workBook;
   private final String workBookName;
   private final CreationHelper creationHelper;
+
   private CellStyle cellStyle;
   private CellStyle dateCellStyle;
   private CellStyle headerCellStyle;
