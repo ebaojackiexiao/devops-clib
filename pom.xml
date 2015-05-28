@@ -7,7 +7,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>DevOps Common Lib</name>
+  <name>DevOps Common Library</name>
   <url>https://github.com/andreyhsiao/devops-clib</url>
 
   <properties>
@@ -31,7 +31,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.18.1</version>
         <configuration>
-          <skipTests>true</skipTests>
+          <skipTests>false</skipTests>
         </configuration>
       </plugin>
       <plugin>
@@ -115,7 +115,7 @@
   <repositories>
     <repository>
       <id>project-lib-repo</id>
-      <name>project lib repository</name>
+      <name>project library repository</name>
       <url>file://${project.basedir}/lib</url>
       <layout>default</layout>
     </repository>
