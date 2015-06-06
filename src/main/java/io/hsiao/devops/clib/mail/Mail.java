@@ -62,27 +62,21 @@ public final class Mail {
     }
 
     try {
-      messageBodyPart.setContent(object, type.trim());
+      messageBodyPart.setContent(object, type);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to set message content");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to set message content [" + object + "] [" + type + "]", ex);
       logger.log(Level.INFO, "failed to set message content [" + object + "] [" + type + "]", exception);
       throw exception;
     }
   }
 
   public void setFrom(final String address) throws Exception {
-    if (address == null) {
-      throw new RuntimeException("argument 'address' is null");
-    }
-
     try {
-      message.setFrom(address.trim());
+      message.setFrom(address);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to set message from address [" + address + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to set message from address [" + address + "]", ex);
       logger.log(Level.INFO, "failed to set message from address [" + address + "]", exception);
       throw exception;
     }
@@ -99,22 +93,20 @@ public final class Mail {
 
     final Message.RecipientType recipientType;
     try {
-      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type.trim()).get(null);
+      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type).get(null);
     }
     catch (java.lang.Exception ex) {
-      final Exception exception = new Exception("invalid message recipient type [" + type + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("invalid message recipient type [" + type + "]", ex);
       logger.log(Level.INFO, "invalid message recipient type [" + type + "]", exception);
       throw exception;
     }
 
     try {
-      final Address internetAddress = new InternetAddress(address.trim(), true);
+      final Address internetAddress = new InternetAddress(address, true);
       message.addRecipient(recipientType, internetAddress);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to add message recipient [" + type + "] [" + address + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to add message recipient [" + type + "] [" + address + "]", ex);
       logger.log(Level.INFO, "failed to add message recipient [" + type + "] [" + address + "]", exception);
       throw exception;
     }
@@ -125,27 +117,21 @@ public final class Mail {
       throw new RuntimeException("argument 'type' is null");
     }
 
-    if (addresses == null) {
-      throw new RuntimeException("argument 'addresses' is null");
-    }
-
     final Message.RecipientType recipientType;
     try {
-      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type.trim()).get(null);
+      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type).get(null);
     }
     catch (java.lang.Exception ex) {
-      final Exception exception = new Exception("invalid message recipient type [" + type + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("invalid message recipient type [" + type + "]", ex);
       logger.log(Level.INFO, "invalid message recipient type [" + type + "]", exception);
       throw exception;
     }
 
     try {
-      message.setRecipients(recipientType, addresses.trim());
+      message.setRecipients(recipientType, addresses);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to set message recipients");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to set message recipients [" + type + "] [" + addresses + "]", ex);
       logger.log(Level.INFO, "failed to set message recipients [" + type + "] [" + addresses + "]", exception);
       throw exception;
     }
@@ -156,35 +142,39 @@ public final class Mail {
       throw new RuntimeException("argument 'type' is null");
     }
 
-    if (addresses == null) {
-      throw new RuntimeException("argument 'addresses' is null");
-    }
-
     final Message.RecipientType recipientType;
     try {
-      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type.trim()).get(null);
+      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type).get(null);
     }
     catch (java.lang.Exception ex) {
-      final Exception exception = new Exception("invalid message recipient type [" + type + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("invalid message recipient type [" + type + "]", ex);
       logger.log(Level.INFO, "invalid message recipient type [" + type + "]", exception);
       throw exception;
     }
 
-    final StringBuilder sb = new StringBuilder();
-    for (final String address: addresses) {
-      if (!address.trim().isEmpty()) {
-        sb.append(address.trim());
-        sb.append(",");
+    final String recipientAddresses;
+    if (addresses == null) {
+      recipientAddresses = null;
+    }
+    else {
+      final StringBuilder sb = new StringBuilder();
+
+      for (String address: addresses) {
+        address = address.trim();
+        if (!address.isEmpty()) {
+          sb.append(address);
+          sb.append(",");
+        }
       }
+
+      recipientAddresses = sb.toString();
     }
 
     try {
-      message.setRecipients(recipientType, sb.toString());
+      message.setRecipients(recipientType, recipientAddresses);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to set message recipients");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to set message recipients [" + type + "] [" + addresses + "]", ex);
       logger.log(Level.INFO, "failed to set message recipients [" + type + "] [" + addresses + "]", exception);
       throw exception;
     }
@@ -195,81 +185,72 @@ public final class Mail {
       throw new RuntimeException("argument 'type' is null");
     }
 
-    if (addresses == null) {
-      throw new RuntimeException("argument 'addresses' is null");
-    }
-
-    if (domain == null) {
-      throw new RuntimeException("argument 'domain' is null");
-    }
-
     final Message.RecipientType recipientType;
     try {
-      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type.trim()).get(null);
+      recipientType = (Message.RecipientType) Message.RecipientType.class.getField(type).get(null);
     }
     catch (java.lang.Exception ex) {
-      final Exception exception = new Exception("invalid message recipient type [" + type + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("invalid message recipient type [" + type + "]", ex);
       logger.log(Level.INFO, "invalid message recipient type [" + type + "]", exception);
       throw exception;
     }
 
-    final StringBuilder sb = new StringBuilder();
-    for (final String address: addresses) {
-      if (address.trim().isEmpty()) {
-        continue;
+    final String recipientAddresses;
+    if (addresses == null) {
+      recipientAddresses = null;
+    }
+    else {
+      final StringBuilder sb = new StringBuilder();
+
+      for (String address: addresses) {
+        address = address.trim();
+        if (address.isEmpty()) {
+          continue;
+        }
+
+        if (!address.contains("@")) {
+          if (domain == null) {
+            throw new RuntimeException("argument 'domain' is null");
+          }
+          sb.append(address + "@" + domain);
+        }
+        else {
+          sb.append(address);
+        }
+
+        sb.append(",");
       }
-      if (!address.contains("@")) {
-        sb.append(address.trim() + "@" + domain.trim());
-      }
-      else {
-        sb.append(address.trim());
-      }
-      sb.append(",");
+
+      recipientAddresses = sb.toString();
     }
 
     try {
-      message.setRecipients(recipientType, sb.toString());
+      message.setRecipients(recipientType, recipientAddresses);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to set message recipients");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to set message recipients [" + type + "] [" + addresses + "] [" + domain + "]", ex);
       logger.log(Level.INFO, "failed to set message recipients [" + type + "] [" + addresses + "] [" + domain + "]", exception);
       throw exception;
     }
   }
 
   public void setSentDate(final Date date) throws Exception {
-    if (date == null) {
-      throw new RuntimeException("argument 'date' is null");
-    }
-
     try {
       message.setSentDate(date);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to set message sent date [" + date + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to set message sent date [" + date + "]", ex);
       logger.log(Level.INFO, "failed to set message sent date [" + date + "]", exception);
       throw exception;
     }
   }
 
   public void setSubject(final String subject, final String charset) throws Exception {
-    if (subject == null) {
-      throw new RuntimeException("argument 'subject' is null");
-    }
-
-    if (charset == null) {
-      throw new RuntimeException("argument 'charset' is null");
-    }
-
     try {
-      message.setSubject(subject, charset.trim());
+      message.setSubject(subject, charset);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to set message subject");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to set message subject [" + subject + "] [" + charset + "]", ex);
       logger.log(Level.INFO, "failed to set message subject [" + subject + "] [" + charset + "]", exception);
       throw exception;
     }
@@ -280,29 +261,19 @@ public final class Mail {
       throw new RuntimeException("argument 'file' is null");
     }
 
-    final MimeBodyPart attachBodyPart = new MimeBodyPart();
-
     try {
+      final MimeBodyPart attachBodyPart = new MimeBodyPart();
       attachBodyPart.attachFile(file);
       attachsBodyPart.add(attachBodyPart);
     }
     catch (IOException | MessagingException ex) {
-      final Exception exception = new Exception("failed to attach file [" + file + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to attach file [" + file + "]", ex);
       logger.log(Level.INFO, "failed to attach file [" + file + "]", exception);
       throw exception;
     }
   }
 
   public void send(final String username, final String password) throws Exception {
-    if (username == null) {
-      throw new RuntimeException("argument 'username' is null");
-    }
-
-    if (password == null) {
-      throw new RuntimeException("argument 'password' is null");
-    }
-
     try {
       final Multipart multipart = new MimeMultipart();
       multipart.addBodyPart(messageBodyPart);
@@ -316,11 +287,14 @@ public final class Mail {
       Transport.send(message, username, password);
     }
     catch (MessagingException ex) {
-      final Exception exception = new Exception("failed to send message");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to send message", ex);
       logger.log(Level.INFO, "failed to send message", exception);
       throw exception;
     }
+  }
+
+  public static String getMailAddress(final String local, final String domain) {
+    return String.format("%s@%s", local, domain);
   }
 
   private static final Logger logger = LoggerFactory.getLogger(Mail.class);
