@@ -8,12 +8,13 @@ import java.util.Date;
 import com.collabnet.ce.soap60.webservices.tracker.ArtifactDetailSoapRow;
 
 public final class ArtifactDetailElement {
-  ArtifactDetailElement(final ArtifactDetailSoapRow artifactDetailSoapRow) {
+  ArtifactDetailElement(final ArtifactDetailSoapRow artifactDetailSoapRow) throws Exception {
     if (artifactDetailSoapRow == null) {
       throw new RuntimeException("argument 'artifactDetailSoapRow' is null");
     }
 
     this.artifactDetailSoapRow = artifactDetailSoapRow;
+    this.artifactFieldValues = new ArtifactFieldValues(artifactDetailSoapRow.getFlexFields());
   }
 
   public int getActualEffort() {
@@ -54,6 +55,91 @@ public final class ArtifactDetailElement {
 
   public int getEstimatedEffort() {
     return artifactDetailSoapRow.getEstimatedEffort();
+  }
+
+  public Object getFieldValue(final String name, final String type) throws Exception {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    if (type == null) {
+      throw new RuntimeException("argument 'type' is null");
+    }
+
+    switch (name.toLowerCase()) {
+      case "actualeffort":
+      case "actual effort":
+        return artifactDetailSoapRow.getActualEffort();
+      case "artifactid":
+      case "artifact id":
+      case "id":
+        return artifactDetailSoapRow.getId();
+      case "assignedtofullname":
+      case "assigned to fullname":
+        return artifactDetailSoapRow.getAssignedToFullname();
+      case "assignedtousername":
+      case "assigned to username":
+        return artifactDetailSoapRow.getAssignedToUsername();
+      case "autosumming":
+      case "auto summing":
+      case "calculateeffort":
+      case "calculate effort":
+        return artifactDetailSoapRow.getAutosumming();
+      case "category":
+        return artifactDetailSoapRow.getCategory();
+      case "closedate":
+      case "close date":
+      case "closeddate":
+      case "closed date":
+        return artifactDetailSoapRow.getCloseDate();
+      case "customer":
+        return artifactDetailSoapRow.getCustomer();
+      case "description":
+        return artifactDetailSoapRow.getDescription();
+      case "estimatedeffort":
+      case "estimated effort":
+        return artifactDetailSoapRow.getEstimatedEffort();
+      case "fixedinrelease":
+      case "fixed in release":
+        return artifactDetailSoapRow.getResolvedInReleaseTitle();
+      case "group":
+        return artifactDetailSoapRow.getArtifactGroup();
+      case "lastmodified":
+      case "last modified":
+      case "lastmodifieddate":
+      case "last modified date":
+        return artifactDetailSoapRow.getLastModifiedDate();
+      case "planningfolder":
+      case "planning folder":
+        return artifactDetailSoapRow.getPlanningFolderTitle();
+      case "points":
+        return artifactDetailSoapRow.getPoints();
+      case "priority":
+        return artifactDetailSoapRow.getPriority();
+      case "remainingeffort":
+      case "remaining effort":
+        return artifactDetailSoapRow.getRemainingEffort();
+      case "reportedinrelease":
+      case "reported in release":
+        return artifactDetailSoapRow.getReportedInReleaseTitle();
+      case "submittedbyfullname":
+      case "submitted by fullname":
+        return artifactDetailSoapRow.getSubmittedByFullname();
+      case "submittedbyusername":
+      case "submitted by username":
+        return artifactDetailSoapRow.getSubmittedByUsername();
+      case "submitdate":
+      case "submit date":
+      case "submitteddate":
+      case "submitted date":
+        return artifactDetailSoapRow.getSubmittedDate();
+      case "status":
+        return artifactDetailSoapRow.getStatus();
+      case "title":
+        return artifactDetailSoapRow.getTitle();
+      default:
+        return artifactFieldValues.getFieldValue(name, type);
+    }
   }
 
   public ArtifactFieldValues getFlexFields() throws Exception {
@@ -180,4 +266,5 @@ public final class ArtifactDetailElement {
   }
 
   private final ArtifactDetailSoapRow artifactDetailSoapRow;
+  private final ArtifactFieldValues artifactFieldValues;
 }

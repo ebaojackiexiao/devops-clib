@@ -124,6 +124,7 @@ public final class TrackerFieldData {
         return FIELD_TYPE_TEXT;
       case "assigned to":
       case "assignedto":
+      case "assignee":
         return FIELD_TYPE_SINGLE_SELECT;
       case "attachment":
         return FIELD_TYPE_TEXT;
@@ -137,6 +138,26 @@ public final class TrackerFieldData {
         return FIELD_TYPE_SINGLE_SELECT;
       case "title":
         return FIELD_TYPE_TEXT;
+      // System defined fields (hidden)
+      case "closedate":
+      case "close date":
+      case "closeddate":
+      case "closed date":
+        return FIELD_TYPE_DATE;
+      case "lastmodified":
+      case "last modified":
+      case "lastmodifieddate":
+      case "last modified date":
+        return FIELD_TYPE_DATE;
+      case "submittedby":
+      case "submitted by":
+      case "submitter":
+        return FIELD_TYPE_SINGLE_SELECT;
+      case "submitdate":
+      case "submit date":
+      case "submitteddate":
+      case "submitted date":
+        return FIELD_TYPE_DATE;
       // Configurable and User defined fields
       default:
         final String internalName = toInternalName(name);

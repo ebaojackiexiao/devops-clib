@@ -23,6 +23,7 @@ public final class FilterElement {
         break;
       case "assignedto":
       case "assigned to":
+      case "assignee":
         soapFilter = new SoapFilter(ArtifactSoapDO.FILTER_ASSIGNED_TO, value);
         break;
       case "autosumming":
@@ -113,6 +114,7 @@ public final class FilterElement {
         break;
       case "submittedby":
       case "submitted by":
+      case "submitter":
         soapFilter = new SoapFilter(ArtifactSoapDO.FILTER_SUBMITTED_BY, value);
         break;
       case "title":

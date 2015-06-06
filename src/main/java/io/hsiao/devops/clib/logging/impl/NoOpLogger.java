@@ -1,9 +1,14 @@
 package io.hsiao.devops.clib.logging.impl;
 
+import io.hsiao.devops.clib.exception.RuntimeException;
 import io.hsiao.devops.clib.logging.Logger;
 
 public final class NoOpLogger implements Logger {
   public NoOpLogger(final String name) {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
     this.name = name;
   }
 
