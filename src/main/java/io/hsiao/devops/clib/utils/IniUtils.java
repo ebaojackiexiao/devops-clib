@@ -98,8 +98,7 @@ public final class IniUtils {
       load(fis, simpleMode);
     }
     catch (IOException ex) {
-      final Exception exception = new Exception("failed to load ini source");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to load ini source", ex);
       logger.log(Level.INFO, "failed to load ini source", exception);
       throw exception;
     }

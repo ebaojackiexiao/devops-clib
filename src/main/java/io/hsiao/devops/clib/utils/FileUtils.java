@@ -7,7 +7,10 @@ import io.hsiao.devops.clib.logging.Logger.Level;
 import io.hsiao.devops.clib.logging.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -20,6 +23,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public final class FileUtils {
+  private FileUtils() {}
+
   public static boolean isEmptyDirectory(final File dir) throws Exception {
     if (dir == null) {
       throw new RuntimeException("argument 'dir' is null");
@@ -29,9 +34,23 @@ public final class FileUtils {
       return !entries.iterator().hasNext();
     }
     catch (IOException ex) {
-      final Exception exception = new Exception("failed to check directory empty status [" + dir + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to check directory empty status [" + dir + "]", ex);
       logger.log(Level.INFO, "failed to check directory empty status [" + dir + "]", exception);
+      throw exception;
+    }
+  }
+
+  public static File mkdir(final File dir) throws Exception {
+    if (dir == null) {
+      throw new RuntimeException("argument 'dir' is null");
+    }
+
+    try {
+      return Files.createDirectories(dir.toPath()).toFile();
+    }
+    catch (IOException ex) {
+      final Exception exception = new Exception("failed to make directory [" + dir + "]", ex);
+      logger.log(Level.INFO, "failed to make directory [" + dir + "]", exception);
       throw exception;
     }
   }
@@ -73,27 +92,37 @@ public final class FileUtils {
       });
     }
     catch (IOException ex) {
-      final Exception exception = new Exception("failed to remove directory [" + dir + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to remove directory [" + dir + "]", ex);
       logger.log(Level.INFO, "failed to remove directory [" + dir + "]", exception);
       throw exception;
     }
   }
 
-  public static File mkdir(final File dir) throws Exception {
-    if (dir == null) {
-      throw new RuntimeException("argument 'dir' is null");
+  public static InputStream loadFileAsStream(final String name) throws Exception {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
     }
 
-    try {
-      return Files.createDirectories(dir.toPath()).toFile();
+    final File file = new File(name);
+    if (file.isFile()) {
+      try {
+        return new FileInputStream(file);
+      }
+      catch (FileNotFoundException ex) {
+        final Exception exception = new Exception("failed to load file [" + name + "]", ex);
+        logger.log(Level.INFO, "failed to load file [" + name + "]", exception);
+        throw exception;
+      }
     }
-    catch (IOException ex) {
-      final Exception exception = new Exception("failed to make directory [" + dir + "]");
-      exception.initCause(ex);
-      logger.log(Level.INFO, "failed to make directory [" + dir + "]", exception);
-      throw exception;
+
+    final InputStream ins = FileUtils.class.getResourceAsStream(name);
+    if (ins != null) {
+      return ins;
     }
+
+    final Exception exception = new Exception("failed to load file (not found on both filesystem and classpath) [" + name + "]");
+    logger.log(Level.INFO, "failed to load file (not found on both filesystem and classpath) [" + name + "]", exception);
+    throw exception;
   }
 
   private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);

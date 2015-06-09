@@ -89,8 +89,7 @@ public final class ZipUtils {
       });
     }
     catch (IOException ex) {
-      final Exception exception = new Exception("failed to pack [" + source + "] to [" + dest + "]");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to pack [" + source + "] to [" + dest + "]", ex);
       logger.log(Level.INFO, "failed to pack [" + source + "] to [" + dest + "]", exception);
       throw exception;
     }

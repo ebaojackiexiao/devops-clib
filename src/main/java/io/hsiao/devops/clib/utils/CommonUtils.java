@@ -12,6 +12,25 @@ import java.util.Map;
 import java.util.Properties;
 
 public final class CommonUtils {
+  private CommonUtils() {}
+
+  public static Properties loadProperties(final String name) throws Exception {
+    if (name == null) {
+      throw new RuntimeException("argument 'name' is null");
+    }
+
+    try (final InputStream ins = FileUtils.loadFileAsStream(name)) {
+      final Properties props = new Properties();
+      props.load(ins);
+      return props;
+    }
+    catch (IOException ex) {
+      final Exception exception = new Exception("failed to load properties [" + name + "]", ex);
+      logger.log(Level.INFO, "failed to load properties [" + name + "]", exception);
+      throw exception;
+    }
+  }
+
   public static Properties loadProperties(final Class<?> object, final String name) throws Exception {
     if (object == null) {
       throw new RuntimeException("argument 'object' is null");
@@ -21,8 +40,6 @@ public final class CommonUtils {
       throw new RuntimeException("argument 'name' is null");
     }
 
-    final Properties props = new Properties();
-
     try (final InputStream ins = object.getResourceAsStream(name)) {
       if (ins == null) {
         final Exception exception = new Exception("failed to locate property file [" + name + "]");
@@ -30,16 +47,15 @@ public final class CommonUtils {
         throw exception;
       }
 
+      final Properties props = new Properties();
       props.load(ins);
+      return props;
     }
     catch (IOException ex) {
-      final Exception exception = new Exception("failed to load properties");
-      exception.initCause(ex);
+      final Exception exception = new Exception("failed to load properties [" + object + "] [" + name + "]", ex);
       logger.log(Level.INFO, "failed to load properties [" + object + "] [" + name + "]", exception);
       throw exception;
     }
-
-    return props;
   }
 
   public static String getProperty(final Properties props, final String name, final boolean allowEmpty) throws Exception {
