@@ -1,12 +1,25 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.RuntimeException;
-
 import java.util.Date;
 
 import com.collabnet.ce.soap60.webservices.frs.ReleaseSoapDO;
 
+import io.hsiao.devops.clib.exception.RuntimeException;
+
 public final class ReleaseData {
+  public static final String MATURITY_ALPHA = ReleaseSoapDO.MATURITY_ALPHA;
+  public static final String MATURITY_BETA = ReleaseSoapDO.MATURITY_BETA;
+  public static final String MATURITY_DEVELOPMENT_BUILD = ReleaseSoapDO.MATURITY_DEVELOPMENT_BUILD;
+  public static final String MATURITY_EARLY_ACCESS = ReleaseSoapDO.MATURITY_EARLY_ACCESS;
+  public static final String MATURITY_GENERAL_AVAILABILITY = ReleaseSoapDO.MATURITY_GENERAL_AVAILABILITY;
+  public static final String MATURITY_OBSOLETE = ReleaseSoapDO.MATURITY_OBSOLETE;
+  public static final String MATURITY_PRE_GENERAL_AVAILABILITY = ReleaseSoapDO.MATURITY_PRE_GENERAL_AVAILABILITY;
+  public static final String MATURITY_PROTOTYPE = ReleaseSoapDO.MATURITY_PROTOTYPE;
+  public static final String MATURITY_STABLE = ReleaseSoapDO.MATURITY_STABLE;
+
+  public static final String STATUS_ACTIVE = ReleaseSoapDO.STATUS_ACTIVE;
+  public static final String STATUS_PENDING = ReleaseSoapDO.STATUS_PENDING;
+
   ReleaseData(final ReleaseSoapDO releaseSoapDO) {
     if (releaseSoapDO == null) {
       throw new RuntimeException("argument 'releaseSoapDO' is null");

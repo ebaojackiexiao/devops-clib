@@ -1,14 +1,5 @@
 package io.hsiao.devops.clib.teamforge;
 
-import io.hsiao.devops.clib.exception.Exception;
-import io.hsiao.devops.clib.exception.RuntimeException;
-import io.hsiao.devops.clib.logging.Logger;
-import io.hsiao.devops.clib.logging.Logger.Level;
-import io.hsiao.devops.clib.logging.LoggerFactory;
-import io.hsiao.devops.clib.utils.CommonUtils;
-import io.hsiao.devops.clib.utils.FileUtils;
-import io.hsiao.devops.clib.utils.ZipUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,6 +58,15 @@ import com.collabnet.ce.soap60.webservices.tracker.ITrackerAppSoap;
 import com.collabnet.ce.soap60.webservices.tracker.TrackerSoapDO;
 import com.collabnet.ce.soap60.webservices.tracker.TrackerSoapList;
 import com.collabnet.ce.soap60.webservices.tracker.TrackerSoapRow;
+
+import io.hsiao.devops.clib.exception.Exception;
+import io.hsiao.devops.clib.exception.RuntimeException;
+import io.hsiao.devops.clib.logging.Logger;
+import io.hsiao.devops.clib.logging.Logger.Level;
+import io.hsiao.devops.clib.logging.LoggerFactory;
+import io.hsiao.devops.clib.utils.CommonUtils;
+import io.hsiao.devops.clib.utils.FileUtils;
+import io.hsiao.devops.clib.utils.ZipUtils;
 
 public final class Teamforge {
   public Teamforge(final String serverUrl, final int timeoutMs) throws Exception {
@@ -694,6 +694,36 @@ public final class Teamforge {
       final Exception exception = new Exception("failed to set release data [" + releaseData.getTitle() + "]");
       exception.initCause(ex);
       logger.log(Level.INFO, "failed to set release data [" + releaseData.getTitle() + "]", exception);
+      throw exception;
+    }
+  }
+
+  public ReleaseData createRelease(final String packageId, final String title,
+      final String description, final String status, final String maturity) throws Exception {
+    if (packageId == null) {
+      throw new RuntimeException("argument 'packageId' is null");
+    }
+
+    if (title == null) {
+      throw new RuntimeException("argument 'title' is null");
+    }
+
+    if (status == null) {
+      throw new RuntimeException("argument 'status' is null");
+    }
+
+    if (maturity == null) {
+      throw new RuntimeException("argument 'maturity' is null");
+    }
+
+    try {
+      final ReleaseSoapDO releaseSoapDO = frsAppSoap.createRelease(sessionKey, packageId, title, description, status, maturity);
+      return new ReleaseData(releaseSoapDO);
+    }
+    catch (RemoteException ex) {
+      final Exception exception = new Exception("failed to create release [" + title + "]");
+      exception.initCause(ex);
+      logger.log(Level.INFO, "failed to create release [" + title + "]", exception);
       throw exception;
     }
   }
